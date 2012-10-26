@@ -120,7 +120,7 @@ var sectionInterAnimate = function(in_section, out_section, direction){
 		case "home":
 			$("#photo_wall").stop(true, true).animate( {
 				top: $("#photo_wall").height() * ((direction < 0)? -1 : 1) * 2
-			}, 500);
+			}, 500);			
 			break;
 		// case "press":
 		// case "attitude":
@@ -145,7 +145,7 @@ var sectionInterAnimate = function(in_section, out_section, direction){
 			$("#photo_wall").stop(true, true).animate( {
 				top: -$(window).height()
 			}, 500);
-			
+			PhotoWall.resize();
 			break;
 			
 		default:
@@ -158,10 +158,10 @@ var sectionInterAnimate = function(in_section, out_section, direction){
 				$(this).css({
 					top: $(this).data('top') + win.height() * ((direction < 0)? 1 : -1) * 1.5
 				}).stop(true, true)
-				.delay(80 * ((direction < 0)? i+1 : children.length-i))
+				.delay(120 * ((direction < 0)? i+1 : children.length-i))
 				.animate({
 					top: $(this).data('top') 
-				}, 500);
+				}, 800);
 			});			
 			if(in_id == "recent"){
 				$('.recent_item .pic img').resizeToParent();

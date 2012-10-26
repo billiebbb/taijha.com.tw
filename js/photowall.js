@@ -93,19 +93,6 @@ var PhotoWall = function(){
 		
 	};
 	
-	var pwScroll = function(){
-		// scroll parallel
-		var mtop = $("#photo_wall").data('mtop');
-		var offset = mtop - $(window).scrollTop()*.7;
-		var min = -500, max = 500;
-		
-		offset = (offset < min) ? min : offset;
-		offset = (offset < max) ? max : offset;
-		
-		$("#photo_wall").stop().animate({
-			marginTop: offset
-		}, 50, 'linear');
-	};
 	
 	var createWall = function(){
 		var type, colobj = [], rand, meta, img;
@@ -175,14 +162,13 @@ var PhotoWall = function(){
 	
 	
 	return {
-		init: init,
-		createWall: createWall,
-		wall: wall || $("#photo_wall")
+		init: init
+		, resize: pwResize
+		, wall: wall || $("#photo_wall")
 	};
 }();
 
 $(function(){
 	$("#photo_wall").hide();
-	// PhotoWall.init();
-	setTimeout( PhotoWall.init, 500);
+	PhotoWall.init();
 });
