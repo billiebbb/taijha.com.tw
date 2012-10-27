@@ -245,6 +245,5 @@ var Menu = function(){
 }();
 
 $(function(){
-	$('#menu').hide();
-	setTimeout(Menu.init, 500);
+	Menu.init();
 });

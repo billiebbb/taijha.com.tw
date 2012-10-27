@@ -145,6 +145,8 @@ var sectionInterAnimate = function(in_section, out_section, direction){
 			$("#photo_wall").stop(true, true).animate( {
 				top: -$(window).height()
 			}, 500);
+			
+			
 			PhotoWall.resize();
 			break;
 			
@@ -161,7 +163,7 @@ var sectionInterAnimate = function(in_section, out_section, direction){
 				.delay(120 * ((direction < 0)? i+1 : children.length-i))
 				.animate({
 					top: $(this).data('top') 
-				}, 800);
+				}, 500);
 			});			
 			if(in_id == "recent"){
 				$('.recent_item .pic img').resizeToParent();
@@ -199,6 +201,7 @@ $(function(){
 	
 	setFloatWave();
 	
+	
 	$.address.change(function(event){
 		
 		var sname = event.pathNames[0];
@@ -219,5 +222,5 @@ $(function(){
 		var direction = (prev_idx < idx)? -1 : 1;
 		
 		setSection(act_section, next_section, direction);
-	});
+	});
 });

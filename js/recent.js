@@ -73,5 +73,5 @@ var Recent = function(){
 }();
 
 $(function(){
-	setTimeout(Recent.init, 800);
+	Recent.init();
 });

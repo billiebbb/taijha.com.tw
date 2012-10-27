@@ -28,7 +28,7 @@ var PhotoWall = function(){
 			$(this).find('.meta').show();
 			$('#modal_bg').show();
 			
-			$(this).maxZIndex({inc: 5});
+			$(this).maxZIndex({inc: 50});
 			
 			var meta = $(this).find('.meta');
 			

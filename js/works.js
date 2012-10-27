@@ -206,9 +206,16 @@ var Works = function(){
 		}
 		else{
 			media.removeClass('l');
-		}		
+		}
+		
+		var myw = parseInt($(window).width()*.4);
+		var myh = parseInt($(window).height()*.45);
+		media.width(myw);
+		
+		media.find(".slider_img").height(myh);		
 		$(".work_item .loading_black").removeClass('loading_black');
 		$(".work_item.active .thumb img").resizeToParent();
+		$(".work_item.active .slider_img img").resizeToParent({type: "fixed", align: "lt"});
 		
 		if($("#work.active").length){
 			var wcon = $("#work #work_logo_container");
@@ -275,5 +282,5 @@ var Works = function(){
 }();
 
 $(function(){
-	setTimeout(Works.init, 800);
+	Works.init();
 });
