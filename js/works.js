@@ -208,10 +208,10 @@ var Works = function(){
 			media.removeClass('l');
 		}
 		
-		var myw = parseInt($(window).width()*.4);
-		var myh = parseInt($(window).height()*.45);
-		media.width(myw);
+		var myw = parseInt($(window).width()*.7);
+		var myh = parseInt($(window).height()*.5);
 		
+		media.width(myw);		
 		media.find(".slider_img").height(myh);		
 		$(".work_item .loading_black").removeClass('loading_black');
 		$(".work_item.active .thumb img").resizeToParent();
