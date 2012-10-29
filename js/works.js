@@ -183,9 +183,6 @@ var Works = function(){
 			
 			yd = data[val];
 			
-			// year_con = $("<div class='year_con'></div>");
-			// year_con.append($('<div class="year_text" key="' + val + '">' + val + '</div>'));
-			// work_logo_list.append(year_con);
 			$.tmpl( "logoItem", yd).appendTo(logo_list);
 			
 			$.tmpl( "workItem", yd).appendTo(work_con );
