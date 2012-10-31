@@ -1,6 +1,7 @@
-var Works = function(){
+var Work = function(){
 	var pyear;
 	var work_logo_index = 0;
+	var isInit = false;
 	var markup = '\
 	<section id="project-${id}" year="${year}" class="work work_item">\
 			<div class="logo" style="background-image: url(${logo});"></div>\
@@ -275,9 +276,10 @@ var Works = function(){
 		init: init
 		, resize: workResize
 		, refreshYear: refreshYear
+		, createWork: createWork
 	};
 }();
 
 $(function(){
-	Works.init();
+	// Work.init();	Work.createWork();
 });

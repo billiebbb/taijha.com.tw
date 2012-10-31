@@ -73,5 +73,5 @@ var Recent = function(){
 }();
 
 $(function(){
-	Recent.init();
+	// Recent.init();
 });

@@ -2,6 +2,7 @@ var Presale = function(){
 	var cur_idx = 0;
 	var presale_data;
 	var pre_idx;
+	var initialized = false;
 	var markup = '\
 		<table style="width: 100%;">\
 			<tbody>\
@@ -157,5 +158,5 @@ var Presale = function(){
 }();
 
 $(function(){
-	Presale.init();
+	// Presale.init();
 });

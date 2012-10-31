@@ -3,6 +3,7 @@ var Home = function(){
 	var body, logo,white,black,menu,title;
 	var pscroll = 0;
 	var h_divid = 4;
+	var initialized = false;
 	
 	var init = function(){
 		
@@ -89,5 +90,5 @@ var Home = function(){
 	
 
 $(function(){
-	Home.init();
+	// Home.init();
 });

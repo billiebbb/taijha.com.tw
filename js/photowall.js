@@ -4,6 +4,7 @@ var PhotoWall = function(){
 	var coltype = ['blank', 'img', 'img', 'img', 'img', 'img'];
 	var img_amount = 15, img_count = 0;
 	var hasImage = {};
+	var initialized = false;
 	
 	var works = [];
 	var markup = "\
@@ -18,7 +19,6 @@ var PhotoWall = function(){
 		{{/if}}\
 	</li>";
 	
-
   	// Compile the markup as a named template
   	
 	var init = function(){
@@ -169,6 +169,6 @@ var PhotoWall = function(){
 }();
 
 $(function(){
-	$("#photo_wall").hide();
-	PhotoWall.init();
+	// $("#photo_wall").hide();
+	PhotoWall.init();
 });

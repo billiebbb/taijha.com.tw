@@ -37,38 +37,26 @@ var swapSection = function(direction){
 	// setSection(act_section, next_section, direction);
 };
 
+var initSection = function(){
+	
+	if($("#" + key1).data("inited") != true){
+		$("#" + key1).data("inited", true);
+		
+		// if(key1 == "home"){
+			// PhotoWall.init();
+		// }
+		
+		var section = window[key1.slice(0,1).toUpperCase() + key1.slice(1)];
+		section.init();
+	}
+};
+
 var setSection = function(act_section, next_section, direction){
 	
 	var out_top, in_top, in_pos;
 	var act_id, next_id;
 	
 	scrollLock = true;
-	
-	if(direction < 0){
-		out_top = -$(window).height() * 2;
-		in_top = 0;
-		in_pos = $(window).height() * 2;
-	}
-	else{
-		out_top = $(window).height() * 2;
-		in_top = 0;
-		in_pos = -$(window).height() * 2;
-	}
-	
-	act_section.removeClass('active').stop(true, true).animate({
-		top: out_top
-	}, 800, function(){
-		$(this).hide();
-		scrollLock = false;
-	});
-	
-	next_section.show().css({
-		top: in_pos + "px"
-	}).addClass('active').stop(true, true).animate({
-		top: in_top
-	}, 800);
-	
-	
 	
 	key1 = next_section.attr("id");	
 	key2 = "";
@@ -83,6 +71,34 @@ var setSection = function(act_section, next_section, direction){
 	}
 	
 	Menu.setCurrentMenu(key1, key2);
+	
+	initSection();
+	
+	if(direction < 0){
+		out_top = -$(window).height() * 2;
+		in_top = 0;
+		in_pos = $(window).height() * 2;
+	}
+	else{
+		out_top = $(window).height() * 2;
+		in_top = 0;
+		in_pos = -$(window).height() * 2;
+	}
+	
+	
+	act_section.removeClass('active').stop(true, true).animate({
+		top: out_top
+	}, 800, function(){
+		$(this).hide();
+		scrollLock = false;
+	});
+	
+	next_section.show().css({
+		top: in_pos + "px"
+	}).addClass('active').stop(true, true).animate({
+		top: in_top
+	}, 800);
+	
 	
 	sectionInterAnimate(next_section, act_section, direction);
 	
@@ -182,7 +198,7 @@ var sectionInterAnimate = function(in_section, out_section, direction){
 		// setTimeout(function(){
 			// Works.resize();			
 		// }, 500);		
-		Works.resize();
+		Work.resize();
 	}
 	else if(in_id == "contact"){
 		Contact.refreshMap();
@@ -202,7 +218,7 @@ $(function(){
 	setFloatWave();
 	
 	
-	$.address.change(function(event){
+	$.address.change( function(event){
 		
 		var sname = event.pathNames[0];
 		var sname = (!sname || sname == null || typeof(sname) == "undefined") ? "home" : sname;
@@ -221,6 +237,6 @@ $(function(){
 		
 		var direction = (prev_idx < idx)? -1 : 1;
 		
-		setSection(act_section, next_section, direction);
+		setSection(act_section, next_section, direction);
 	});
 });

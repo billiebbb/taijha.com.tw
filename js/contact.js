@@ -3,6 +3,8 @@
 var Contact = function(){
 	var map;
 	var marker;
+	var initialized = false;
+	
 	var init = function(){
 		
 		if($.browser.msie){
@@ -108,5 +110,5 @@ var Contact = function(){
 }();
 
 $(function(){
-	Contact.init();
+	// Contact.init();
 });

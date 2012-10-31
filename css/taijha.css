@@ -1309,3 +1309,13 @@ a, a:active, a:focus, a:hover, input {
 	top: 500px;
 	display: none;
 }
+
+.no_mov {
+	width: 640px;
+	height: 360px;
+	line-height: 360px;
+	text-align: center;
+	color: #fff;
+	background-color: #000000;
+	font-size: 18px;
+}

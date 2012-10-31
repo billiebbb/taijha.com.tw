@@ -253,5 +253,5 @@ var Story = function(){
 }();
 
 $(function(){
-	Story.init();
+	// Story.init();
 });

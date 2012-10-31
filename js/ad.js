@@ -2,6 +2,7 @@ var Ad = function(){
 	var ad_data;
 	var full_img = [];
 	var full_thumb = [];
+	var initialized = false;
 	var init = function(){
 		ad_data = ADData;
 		
@@ -45,5 +46,5 @@ var Ad = function(){
 }();
 
 $(function(){
-	Ad.init();
+	// Ad.init();
 });

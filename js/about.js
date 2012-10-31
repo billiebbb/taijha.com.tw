@@ -1,7 +1,7 @@
 var About = function(){
 	var logo, menu;
 	var subcon = [];
-	
+	var initialized = false;
 	var init = function(){
 		
 		logo = $('#logo');
@@ -9,55 +9,9 @@ var About = function(){
 		// var mtop = ParseCssNumber(title.css("top")) + parseInt(title.height()/2 + 30);		
 		subcon = ['press', 'attitude', 'documentary'];
 		
-		$(window).resize(aboutResize);
-		// $(window).scroll(aboutScroll);
-	};
-	
-	var aboutResize = function(){
 		
-		// var img, tit, line, m1, m2, m3;
-// 		
-		// for(var i = 0; i < subcon.length; i++){
-			// img = $('#' + subcon[i] + '_img');
-			// tit = $('#' + subcon[i] + '_tit');
-			// line = $('#' + subcon[i] + '_line');
-// 			
-			// m1 = -$(window).height()/3 + $('#' + subcon[i]).position().top + i*150 - img.height();
-			// m2 = -$(window).height() / (($(window).height() > 500) ?  5 : 20) + $('#' + subcon[i]).position().top + i*150;
-			// m3 = -line.height() / 2 + $('#' + subcon[i]).position().top + i*150;
-// 			
-			// if(img.length){
-				// img.css({
-					// marginTop: m1
-				// });
-// 				
-				// img.data('mtop', m1);
-			// }
-// 	
-			// if(tit.length){
-				// tit.css({
-					// marginTop: m2
-				// });
-// 				
-				// tit.data('mtop', m2);
-			// }
-// 			
-			// if(line.length){
-				// line.css({
-					// marginTop: m3
-				// });
-// 				
-				// line.data('mtop', m3);
-			// }
-// 			
-		// }
-// 		
-		// var content = $("#about .content");
-		// content.height("auto").height(content.height());		
-// 		
-		// aboutScroll();
 	};
-	
+		
 	var aboutScroll = function(){
 		var mtop;
 		
@@ -110,5 +64,5 @@ var About = function(){
 }();
 
 $(function(){
-	About.init();
+	// About.init();
 });
