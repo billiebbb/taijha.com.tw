@@ -225,5 +225,6 @@ var WorksData = function(){
 		, getMeta: {}
 		, getYears: getYears
 		, getYearsList: getYearsList
+		, setWorksData: setWorksData
 	}
 }();

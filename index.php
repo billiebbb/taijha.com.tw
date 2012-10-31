@@ -469,15 +469,15 @@
 						<div class="btn-group" class="contact_type" style="margin-bottom: 10px; float: right;">
 							<div class="btn active">客戶服務</div>
 							<div class="btn">成家故事</div>
-							<div class="btn">一般連絡</div>
+							<div class="btn">資料索取</div>
 						</div>
 						
-						<input type="text" placeholder="* 請輸入您的暱稱" />
-						<input type="text" placeholder="* 請輸入您的聯絡信箱" />
-						<input type="text" placeholder="* 請輸入您的訊息主旨" />
-						<textarea style="height: 90px;" placeholder="* 請輸入訊息內容" /></textarea>
+						<input id="contact_name" type="text" placeholder="* 請輸入您的暱稱" />
+						<input id="contact_email" type="text" placeholder="* 請輸入您的聯絡信箱" />
+						<input id="contact_subject" type="text" placeholder="* 請輸入您的訊息主旨" />
+						<textarea id="contact_content" style="height: 90px;" placeholder="* 請輸入訊息內容" /></textarea>
 						<div style="float: left; height: 36px; line-height: 36px;">* 必填欄位</div>
-						<div class="tj_btn active" style="float: right;">
+						<div id="contact_submit" class="tj_btn active" style="float: right;">
 							<div class="icon-envelope icon-white"></div>
 							送出訊息
 						</div>
