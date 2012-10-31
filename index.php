@@ -6,8 +6,8 @@
 		<title>泰嘉開發</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" >
 	    <meta name="author" content="Tom Shih,tom@riversense.tw" >
-	    <meta name="description" content="" >
-	    <meta name="key" content="" >
+	    <meta name="description" content="泰嘉建設開發" >
+	    <meta name="key" content="泰嘉開發,泰嘉,泰嘉建設,TAIJIA,TAI-JIA,taijia,tai-jia,建設開發,建築設計,水建築,建案開發,預推建案,統發不動產,統發建設,悅讀系建築,高雄,水世紀,水工坊,悅讀工坊,愛上悅讀,悅讀知音,悅讀水世紀,水山硯,水丰景,高雄建案,高雄開發,高雄建設,高雄建築,關於泰嘉,熱銷新案,歷年作品,成家故事,廣告欣賞,泰嘉紀實錄影音檔,沿革,態度" >
 	    
 	    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 	    

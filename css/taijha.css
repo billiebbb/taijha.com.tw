@@ -1095,6 +1095,21 @@ a, a:active, a:focus, a:hover, input {
     cursor: pointer;
 }
 
+#presale #map_thumb.active, #presale #show_map.active{
+	cursor: default;
+	opacity: 0.7;
+	filter: alpha(opacity = 70);
+}
+
+#presale .no_map {
+	height: 70px;
+	width: 130px;
+	color: #fff;
+	background-color: #333;
+	text-align: center;
+	line-height: 70px;
+}
+
 #presale #map_thumb img{
 	max-width: 100%;
 }

@@ -77,6 +77,8 @@ var Presale = function(){
 		// .tooltip();
 		
 		$("#presale").find("#map_thumb, #show_map").live("click", function(){
+			if($("#presale #map_thumb").is(".active")) return;
+			
 			LightBox.show({images: [presale_data[cur_idx].map]} );
 		});
 		
@@ -115,8 +117,15 @@ var Presale = function(){
 		$("#presale #building").append(nimg);
 		
 		nimg.animate({left: 0}, 500);
+		if(mydata.map_thumb){
+			$("#presale #map_thumb").html("<img src='" + mydata.map_thumb + "' />");
+			$("#presale").find("#map_thumb, #show_map").removeClass('active');	
+		}	
+		else{
+			$("#presale #map_thumb").html("<div class='no_map'>位置圖建構中</div>");
+			$("#presale").find("#map_thumb, #show_map").addClass('active');
+		}	
 		
-		$("#presale #map_thumb").html("<img src='" + mydata.map_thumb + "' />");
 		
 		$("#presale #presale_list .item.active").removeClass('active')
 		$("#presale #presale_list .item:eq(" + cur_idx + ")").addClass('active');

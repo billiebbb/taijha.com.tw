@@ -51,8 +51,8 @@ var PresaleData = [
 		, thumbs: [
 			"uploads/presale/02/thumbs/00.jpg"
 		]
-		, map: "uploads/presale/02/map.jpg"
-		, map_thumb: "uploads/presale/02/map_thumb.jpg"
+		// , map: "uploads/presale/02/map.jpg"
+		// , map_thumb: "uploads/presale/02/map_thumb.jpg"
 	}
 	,{
 		name: "仁美神農段電梯別墅案"
@@ -69,7 +69,7 @@ var PresaleData = [
 		, thumbs: [
 			"uploads/presale/03/thumbs/00.jpg"
 		]
-		, map: "uploads/presale/03/map.jpg"
-		, map_thumb: "uploads/presale/03/map_thumb.jpg"
+		// , map: "uploads/presale/03/map.jpg"
+		// , map_thumb: "uploads/presale/03/map_thumb.jpg"
 	}
 ];
