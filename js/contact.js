@@ -13,10 +13,78 @@ var Contact = function(){
 			});
 		}
 		
+		$("#contact_form #type_btn .btn").live("click", function(){
+			if($(this).is(".active")) return;
+			
+			$("#contact_form #type_btn .btn.active").removeClass("active");
+			$(this).addClass("active");
+			
+			$("#contact_form #ctype").val($(this).text());
+		});
+		
+		$("#contact_form").find("input, textarea").keyup(checkForm).val("");
+		
+		$("#contact_form #cemail").filter_input({regex:'[\.a-z0-9@-]'}); 
+		
 		initMap();
 	};
 	
-	function initMap() {
+	var checkForm = function(){
+		var cf = $("#contact_form");
+		var cemail = cf.find("#cemail").val();
+		var ctype = cf.find("#ctype").val();
+		if(!ctype){
+			cf.find("#ctype").val(cf.find("#type_btn .btn.active").text());
+			ctype = cf.find("#ctype").val();
+		}
+		var csubject = cf.find("#csubject").val();
+		var cname = cf.find("#cname").val();
+		var ccomment = cf.find("#ccomment").val();
+		var email_vailed = checkEmail(cemail);
+		
+		if($(this).is("#cemail")){
+			if(!email_vailed){
+				cf.find("#exclamation:hidden").show();
+				return;
+			}else{
+				cf.find("#exclamation:visible").hide();
+			}	
+		}
+		
+		if(ctype && csubject && cname && ccomment && email_vailed){
+			cf.find("#submit.active").removeClass("active").click(function(){
+				$.ajax({
+					type: "POST",
+					url: "sendmail.php",
+					data: {
+						cname: cname
+						, csubject: csubject
+						, ctype: ctype
+						, ccomment: ccomment
+						, cemail: cemail
+					},
+					success: function() {
+						ModalMessage.show({
+							message: "您的訊息已送出"
+							, autoHide: 3000
+							, hideCancel: true
+						});
+						
+						
+						$("#contact_form").find("input, textarea").keyup(checkForm).val("");
+						
+						$("#contact_form").find("#exclamation:visible").hide();
+					}
+				});
+			});
+		}
+		else{
+			cf.find("#submit:not(.active)").addClass("active").unbind("click");
+		}
+		
+	};
+	
+	var initMap = function() {
 	
 	  	// Create an array of styles.
 		var styles = [
@@ -110,5 +178,5 @@ var Contact = function(){
 }();
 
 $(function(){
-	// Contact.init();
+	// Contact.init();
 });

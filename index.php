@@ -51,6 +51,9 @@
 		<script src="com/bootstrap-tooltip.js" type="text/javascript"></script>
 		<script src="com/setSlider/slider.js" type="text/javascript"></script>
 		<script src="com/jquery.coverscroll.min.js" type="text/javascript"></script>
+		<script src="com/jquery.filter_input.js" type="text/javascript"></script>
+		
+		<script src="com/check-email.js"></script>
 		
 		<script src="com/jquery.ui.touch-punch/jquery.ui.touch-punch.min.js" type="text/javascript"></script>
 		
@@ -60,6 +63,8 @@
 		<script src="com/underscore-min.js" type="text/javascript"></script>
 		<script src="com/is_mobile.js" type="text/javascript"></script>
 		<script src="com/jquery.hasevent.js" type="text/javascript"></script>
+		
+		<script src='com/modal-message.js' type="text/javascript"></script>
 		
 		<script src='js/lightbox/lightbox.js' type="text/javascript"></script>
 		
@@ -80,6 +85,8 @@
 		<script src='js/presale.js' type="text/javascript"></script>
 		<script src='js/ad.js' type="text/javascript"></script>
 		<script src='js/contact.js' type="text/javascript"></script>
+		
+		
 		
 		<script src="js/stage.js" type="text/javascript"></script>
 <!-- 		<script src="js/wave.js" type="text/javascript"></script> -->
@@ -480,24 +487,32 @@
 					</div>
 					<div class="v_line" style="left: 35px"></div>
 					
-					<div id="contact_form" style="z-index: 700;">
+					<form id="contact_form" method="POST" style="z-index: 700;" action="sendmail.php">
 						<div style="float: left; font-size: 14px; line-height: 32px; height: 32px; margin-right: 10px;">選擇訊息類型</div>
-						<div class="btn-group" class="contact_type" style="margin-bottom: 10px; float: right;">
+						
+						<div id="type_btn" class="btn-group" style="margin-bottom: 10px; float: right;">
 							<div class="btn active">客戶服務</div>
 							<div class="btn">成家故事</div>
 							<div class="btn">資料索取</div>
 						</div>
 						
-						<input id="contact_name" type="text" placeholder="* 請輸入您的暱稱" />
-						<input id="contact_email" type="text" placeholder="* 請輸入您的聯絡信箱" />
-						<input id="contact_subject" type="text" placeholder="* 請輸入您的訊息主旨" />
-						<textarea id="contact_content" style="height: 90px;" placeholder="* 請輸入訊息內容" /></textarea>
+						<input id="ctype" type="hidden" name="ctype" value="客戶服務" />
+						
+						<input id="cname" name="cname" type="text" placeholder="* 請輸入您的暱稱" />
+						<div>
+							<input id="cemail" name="cemail" type="text" placeholder="* 請輸入您的聯絡信箱" />
+							<div id="exclamation" class="icon-exclamation-sign" style="position: absolute; right: -22px; margin-top: 8px; display: none;"></div>
+						</div>
+						<input id="csubject" name="csubject" type="text" placeholder="* 請輸入您的訊息主旨" />
+						
+						<textarea id="ccomment" name="ccomment" style="height: 90px;" placeholder="* 請輸入訊息內容" /></textarea>
+						
 						<div style="float: left; height: 36px; line-height: 36px;">* 必填欄位</div>
-						<div id="contact_submit" class="tj_btn active" style="float: right;">
+						<div id="submit" class="tj_btn active" style="float: right;">
 							<div class="icon-envelope icon-white"></div>
 							送出訊息
 						</div>
-					</div>
+					</form>
 					
 					<div id="contact_info">
 						<div style="margin-bottom: 15px; padding: 0 30px 15px 0; border-bottom: #ccc solid 1px; font-size: 14px;">

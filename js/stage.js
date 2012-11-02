@@ -41,11 +41,6 @@ var initSection = function(){
 	
 	if($("#" + key1).data("inited") != true){
 		$("#" + key1).data("inited", true);
-		
-		// if(key1 == "home"){
-			// PhotoWall.init();
-		// }
-		
 		var section = window[key1.slice(0,1).toUpperCase() + key1.slice(1)];
 		section.init();
 	}
