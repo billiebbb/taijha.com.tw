@@ -1,5 +1,6 @@
 var scrollLock = false;
 var pre_section;
+var blockwheel = false;
 
 var goToSection = function(sname){
 	if(scrollLock) return;
@@ -38,7 +39,6 @@ var swapSection = function(direction){
 };
 
 var initSection = function(){
-	
 	if($("#" + key1).data("inited") != true){
 		$("#" + key1).data("inited", true);
 		var section = window[key1.slice(0,1).toUpperCase() + key1.slice(1)];
@@ -53,24 +53,6 @@ var setSection = function(act_section, next_section, direction){
 	
 	scrollLock = true;
 	
-	key1 = next_section.attr("id");	
-	key2 = "";
-	var reg = new RegExp('project', 'g');
-	
-	if(key1 == "press" || key1 == "attitude" || key1 == "documentary"){
-		key2 = key1;
-		key1 = 'about';
-	}
-	else if(reg.test(key1)){
-		key2 = next_section.attr('year');
-		key1 = 'work';
-		
-		if(!next_section.data("init")){
-			Work.buildProject(next_section);
-		}
-	}
-	
-	Menu.setCurrentMenu(key1, key2);
 	initSection();
 	
 	if(direction < 0){
@@ -103,6 +85,7 @@ var setSection = function(act_section, next_section, direction){
 	
 	setWaveBg();
 };
+
 var setWaveBg = function(){
 	var sec = $("section");
 	var idx = parseInt(sec.index($("section.active")));
@@ -136,6 +119,8 @@ var sectionInterAnimate = function(in_section, out_section, direction){
 			$("#photo_wall").stop(true, true).animate( {
 				top: $("#photo_wall").height() * ((direction < 0)? -1 : 1) * 2
 			}, 500);			
+			PhotoWall.resize();
+			
 			break;
 		// case "press":
 		// case "attitude":
@@ -204,7 +189,7 @@ var sectionInterAnimate = function(in_section, out_section, direction){
 	}	
 };
 
-var blockwheel = false;
+
 $(function(){
 	$("section:first").addClass('active').show();	
 	$("#menu .item:first").addClass('active');
@@ -220,8 +205,9 @@ $(function(){
 	$.address.change( function(event){
 		
 		var sname = event.pathNames[0];
-		var sname = (!sname || sname == null || typeof(sname) == "undefined") ? "home" : sname;
 		
+		var sname = (!sname || sname == null || typeof(sname) == "undefined") ? "home" : sname;
+				
 		var section = $("section");
 		var act_section = $("section.active");
 		var next_section = $("section#" + sname);
@@ -235,6 +221,25 @@ $(function(){
 		if(idx == prev_idx) return; 
 		
 		var direction = (prev_idx < idx)? -1 : 1;
+		
+		key1 = sname;
+		key2 = "";
+		
+		var reg = new RegExp('project', 'g');	
+		if(key1 == "press" || key1 == "attitude" || key1 == "documentary"){
+			key2 = key1;
+			key1 = 'about';
+		}
+		else if(reg.test(key1)){
+			key2 = next_section.attr('year');
+			key1 = 'work';
+			
+			if(!next_section.data("init")){
+				Work.buildProject(next_section);
+			}
+		}
+		
+		Menu.setCurrentMenu(key1, key2);
 		
 		setSection(act_section, next_section, direction);
 	});

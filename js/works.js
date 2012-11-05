@@ -2,6 +2,9 @@ var Work = function(){
 	var pyear;
 	var work_logo_index = 0;
 	var isInit = false;
+	
+	var hasWork = false;
+	
 	var markup = '\
 	<section id="project-${id}" year="${year}" class="work work_item">\
 	</section>';
@@ -47,7 +50,12 @@ var Work = function(){
 	';
 	
 	var init = function(){
-		createWork();
+		// if(!hasWork) {
+			// hasWork = true;
+			// createWork();
+		// }else{
+			// return;
+		// }
 		
 		$(".work_item .media .thumb:not(.active)").live("click", function(){
 			var media = $(this).parents('.media');
@@ -170,6 +178,7 @@ var Work = function(){
 		
 		$proj.append(tmpl);
 		
+		$proj.find(".thumb:first").addClass("active");
 		$proj.find(".thumb img").resizeToParent();
 		$proj.find(".slider_img img").resizeToParent({type: "fixed", align: "lt"});
 		
@@ -200,17 +209,18 @@ var Work = function(){
 		var data = WorksData.getYears();
 		var mydata = '';
 		var year_con, work_con = $("#work_content");
-		var yd;
 		var logo_list = $("#logo_list");
 		
+		// console.dir(data);
+		
 		$.each(yl, function(i, val){
-			
 			yd = data[val];
 			
 			$.tmpl( "logoItem", yd).appendTo(logo_list);
-			
 			$.tmpl( "workItem", yd).appendTo(work_con );
 		});		
+		
+		
 		$.each($('.work_item .media'), function(){
 			$(this).find('.thumb:first, .prev_btn').addClass('active');
 		});

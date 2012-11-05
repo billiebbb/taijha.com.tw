@@ -58,7 +58,7 @@ var PhotoWall = function(){
 	};
 	
 	var pwResize = function(){
-		if(!$("#photo_wall:in-viewport").length) return;
+		// if(!$("#photo_wall:in-viewport").length) return;
 		
 		
 		$("#photo_wall").css("top", -$(window).height() + "px");		
@@ -141,23 +141,20 @@ var PhotoWall = function(){
 		$("#photo_wall").width(pw);
 		$("#photo_wall").css("top", -$(window).height() + "px");
 		
-		wall.hide().imagesLoaded( function(){
-			
-			wall.find(".pic").show();		
-			wall.show().masonry({
-				itemSelector : '.photo_item'
-				// , isAnimated: true
-				, columnWidth: (wall.width() < 430 )? 125 : 185
-			}).find('.photo_item').removeClass('loading');
-			
-			$('.photo_item img').resizeToParent({
-				parent: ".photo_item"
-				, fadeIn: 300
-			});
-			
-			setTimeout(pwResize, 500);
-			
-		});
+		wall.find(".pic").show();
+				
+		wall.show().masonry({
+			itemSelector : '.photo_item'
+			// , isAnimated: true
+			, columnWidth: (wall.width() < 430 )? 125 : 185
+		}).find('.photo_item').removeClass('loading');
+		
+		$('.photo_item img').resizeToParent({
+			parent: ".photo_item"
+			, fadeIn: 300
+		});
+		
+		// setTimeout(pwResize, 500);
 	};
 	
 	

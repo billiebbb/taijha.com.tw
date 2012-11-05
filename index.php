@@ -68,6 +68,8 @@
 		
 		<script src='js/lightbox/lightbox.js' type="text/javascript"></script>
 		
+		<script src="js/menu.js" type="text/javascript"></script>
+		
 		<script src='js/works_data.js' type="text/javascript"></script>
 		<script src='js/recent_data.js' type="text/javascript"></script>
 		<script src='js/story_data.js' type="text/javascript"></script>
@@ -76,7 +78,6 @@
 		
 		<script src="js/photowall.js" type="text/javascript"></script>
 		<script src="js/home.js" type="text/javascript"></script>
-		<script src="js/menu.js" type="text/javascript"></script>
 		
 		<script src="js/about.js" type="text/javascript"></script>
 		<script src="js/recent.js" type="text/javascript"></script>
