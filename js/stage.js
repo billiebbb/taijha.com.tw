@@ -56,6 +56,7 @@ var setSection = function(act_section, next_section, direction){
 	key1 = next_section.attr("id");	
 	key2 = "";
 	var reg = new RegExp('project', 'g');
+	
 	if(key1 == "press" || key1 == "attitude" || key1 == "documentary"){
 		key2 = key1;
 		key1 = 'about';
@@ -63,10 +64,13 @@ var setSection = function(act_section, next_section, direction){
 	else if(reg.test(key1)){
 		key2 = next_section.attr('year');
 		key1 = 'work';
+		
+		if(!next_section.data("init")){
+			Work.buildProject(next_section);
+		}
 	}
 	
 	Menu.setCurrentMenu(key1, key2);
-	
 	initSection();
 	
 	if(direction < 0){

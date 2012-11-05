@@ -229,10 +229,7 @@
 							不該用賺錢的單一角度來衡量。
 							</p>
 						</div>
-						
-					
-					
-					
+
 						<div class="v_line" style='left: 100px;'></div>
 						
 						<img id='attitude_img' src='uploads/about_img2.jpg' style="

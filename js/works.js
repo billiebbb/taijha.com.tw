@@ -4,6 +4,10 @@ var Work = function(){
 	var isInit = false;
 	var markup = '\
 	<section id="project-${id}" year="${year}" class="work work_item">\
+	</section>';
+	
+	var markup_work_body = '\
+		<div>\
 			<div class="logo" style="background-image: url(${logo});"></div>\
 			<div class="subtitle">\
 				<img src="${subtitle}" />\
@@ -33,7 +37,8 @@ var Work = function(){
 					<img src="${images[0]}" />\
 				</div>\
 			</div>\
-	</section>'; 
+		</div>\
+	';
 	
 	var markup2 = '\
 		<div class="work_logo"  rel="tooltip" title="${year}" pid="project-${id}">\
@@ -150,7 +155,24 @@ var Work = function(){
 		});
 		
 		$(window).resize(workResize);
-		// .scroll(onWorkScroll);
+		// .scroll(onWorkScroll);
+	};
+	
+	var buildProject = function($proj){
+		
+		
+		if($proj.data("init")) return;
+		
+		$proj.data("init", true);
+		
+		var idx = $(".work_item").index($proj);
+		var tmpl = $.tmpl( "workItemBody", WorksData.works[idx]);
+		
+		$proj.append(tmpl);
+		
+		$proj.find(".thumb img").resizeToParent();
+		$proj.find(".slider_img img").resizeToParent({type: "fixed", align: "lt"});
+		
 	};
 	
 	var setMediaArrow = function(media, idx) {
@@ -172,6 +194,7 @@ var Work = function(){
 	var createWork = function(){
 		$.template( "workItem", markup );
 		$.template( "logoItem", markup2 );
+		$.template( "workItemBody", markup_work_body);
 		
 		var yl = WorksData.getYearsList();
 		var data = WorksData.getYears();
@@ -245,14 +268,6 @@ var Work = function(){
 		else if(yw.is(":visible")){
 			ty = "0000";
 		}
-		
-		
-		// if(yw.data("year") == ty && !inwork.length || ty == "0000" || ty==""){
-			// yw.stop().animate({opacity: 0});
-			// return;
-		// }
-// 		
-		// yw.show().stop(true).animate({opacity: 1});
 
 		setYear(ty);
 		yw.data('year', ty);
@@ -277,6 +292,7 @@ var Work = function(){
 		, resize: workResize
 		, refreshYear: refreshYear
 		, createWork: createWork
+		, buildProject: buildProject
 	};
 }();
 
