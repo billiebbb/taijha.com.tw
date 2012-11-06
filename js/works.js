@@ -59,11 +59,10 @@ var Work = function(){
 		
 		$(".work_item .media .thumb:not(.active)").live("click", function(){
 			var media = $(this).parents('.media');
-			if(!media.data('data')){
-				media.data('data', WorksData.works[$('.work_item .media').index(media)]);
-			}
+			var work_item = $(this).parents('.work_item');
 			
-			var data = media.data('data')
+			var data = work_item.data('data');
+			
 			var slider_img = media.find('.slider_img');
 			var idx = media.find('.thumb').index($(this));
 			media.find('.thumb.active').removeClass('active');
@@ -95,11 +94,11 @@ var Work = function(){
 		
 		$(".work_item .media .arrow:not(.active)").live("click", function(){
 			var media = $(this).parents('.media');
-			if(!media.data('data')){
-				media.data('data', WorksData.works[$('.work_item .media').index(media)]);
-			}
 			
-			var data = media.data('data');
+			var work_item = $(this).parents('.work_item');
+			
+			var data = work_item.data('data');
+			
 			var slider_img = media.find('.slider_img');
 			var idx = media.find('.thumb').index(media.find('.thumb.active'));
 			
@@ -112,11 +111,8 @@ var Work = function(){
 		
 		$(".work_item .media .full_btn").live('click', function(){
 			var media = $(this).parents('.media');
-			if(!media.data('data')){
-				media.data('data', WorksData.works[$('.work_item .media').index(media)]);
-			}
 			
-			var data = media.data('data');
+			var data = media.parents(".work_item").data('data');
 			var idx = media.find('.thumb').index(media.find('.thumb.active'));
 			
 			LightBox.show({images: data.images, index: idx, thumbs: data.thumbs} );
@@ -185,7 +181,7 @@ var Work = function(){
 	};
 	
 	var setMediaArrow = function(media, idx) {
-		var data = media.data('data');
+		var data = media.parents(".work_item").data('data');
 		
 		if(idx == data.images.length -1){
 			media.find('.next_btn').stop(true, true).addClass('active');
@@ -211,18 +207,22 @@ var Work = function(){
 		var year_con, work_con = $("#work_content");
 		var logo_list = $("#logo_list");
 		
-		// console.dir(data);
+		console.log("createWork");
 		
 		$.each(yl, function(i, val){
 			yd = data[val];
 			
 			$.tmpl( "logoItem", yd).appendTo(logo_list);
-			$.tmpl( "workItem", yd).appendTo(work_con );
+			$.tmpl( "workItem", yd).appendTo(work_con);
 		});		
 		
-		
-		$.each($('.work_item .media'), function(){
-			$(this).find('.thumb:first, .prev_btn').addClass('active');
+		var work_item;
+		$.each($('.work_item'), function(i){
+			work_item = $(this);
+			
+			if(!work_item.data('data')){
+				work_item.data('data', WorksData.works[i]);
+			}
 		});
 		
 	};
