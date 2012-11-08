@@ -15,9 +15,14 @@
 	    
 	    <link href="com/setSlider/slider.css" rel="stylesheet">
 	    <link href="com/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+	    
+	    <link href="com/redactor/redactor.css" rel="stylesheet">
+	    
 		<link href="css/taijha.css" rel="stylesheet">
 		<link href="js/lightbox/lightbox.css" rel="stylesheet">
 		<link href='http://fonts.googleapis.com/css?family=Rochester' rel='stylesheet' type='text/css'>
+		<link href="com/fileuploader/fileuploader.css" rel="stylesheet">
+		
 		<!-- <link href="com/jquery-ui-1.9.1.custom/css/ui-lightness/jquery-ui-1.9.1.custom.min.css" rel="stylesheet"> -->
 <!-- 		<link href='com/jquery-ui-1.8.24/css/ui-lightness/jquery-ui-1.8.24.custom.css' rel='stylesheet' type='text/css'> -->
 		
@@ -55,6 +60,11 @@
 		
 		<script src="com/check-email.js"></script>
 		
+		<script src="com/redactor/redactor.js"></script>
+		<script src="com/redactor/langs/zh_tw.js"></script>
+		
+		<script src="com/fileuploader/fileuploader.min.js"></script>
+		
 		<script src="com/jquery.ui.touch-punch/jquery.ui.touch-punch.min.js" type="text/javascript"></script>
 		
 		
@@ -65,6 +75,7 @@
 		<script src="com/jquery.hasevent.js" type="text/javascript"></script>
 		
 		<script src='com/modal-message.js' type="text/javascript"></script>
+		<script src='com/bootbox.min.js' type="text/javascript"></script>
 		
 		<script src='js/lightbox/lightbox.js' type="text/javascript"></script>
 		
@@ -81,7 +92,7 @@
 		<script src="js/menu.js" type="text/javascript"></script>
 		
 		
-		
+		<script src="js/year_widget.js" type="text/javascript"></script>
 		<script src="js/photowall.js" type="text/javascript"></script>
 		<script src="js/home.js" type="text/javascript"></script>
 		
@@ -92,6 +103,9 @@
 		<script src='js/presale.js' type="text/javascript"></script>
 		<script src='js/ad.js' type="text/javascript"></script>
 		<script src='js/contact.js' type="text/javascript"></script>
+		
+		
+		<script src='js/tj_editor.js' type="text/javascript"></script>
 		
 		
 		
@@ -110,6 +124,7 @@
 		  })();
 		
 		</script>
+		
 	</head>
 	<body>
 		<div id="modal_bg"></div>
@@ -128,6 +143,13 @@
 		<div id="wall_bg"></div>
 		<div id="wave_bg"></div>
 		
+		<div id="years_widget">
+			<div class="number"></div>
+			<div class="number"></div>
+			<div class="number"></div>
+			<div class="number"></div>
+		</div>
+		
 		<div id="page_mark"></div>
 		<!-- <div class="dot_pattern v1"></div>
 		<div class="dot_pattern v2"></div> -->
@@ -137,6 +159,9 @@
 			<!-- home content start -->
 				<section id="home" class="active">
 					<div id="home_title" class="content_title">
+						
+						<div class='tj_btn edit text' key='home' action="">編輯文字</div>
+						
 						<span style="font-size: 22px; font-weight: normal; color: #808080; font-family: Times New Roman, Times;">2012</span>年，高雄的天空一樣的藍。<br />
 						<p>
 						高雄的建築，一樣有著競相爭豔、分辨不清誰是誰的華麗天際線。<br />
@@ -163,19 +188,24 @@
 				<!-- about content start -->
 				<!-- <section id="about"> -->
 					<section id="press">
-							
-						<img src='uploads/about_img1.jpg' id='press_img' style="
+						
+						<div style="
 						left: -370px;
 					    position: absolute;
 					    top: -200px;
-					    " />
+					    ">
+							<img src='uploads/about_img1.jpg' id='press_img' />
+						    <div class='tj_btn edit image' key='press' action="">編輯圖片</div>
+					    </div>
 						
-						
-						<img id="press_tit" src='uploads/about_title_1.png' style="
-						left: -365px;
+						<div style="
+						left: -370px;
 					    position: absolute;
 					    top: 50px;
-						"/>
+						">
+							<img id="press_tit" src='uploads/about_title_1.png' />
+							<div class='tj_btn edit image' key='press' action="">編輯標題</div>
+						</div>
 						
 						<div class="v_line" ></div>
 						
@@ -194,18 +224,21 @@
 							<span style="font-size: 18px; font-weight: bold; line-height: 34px;">泰嘉「水建築」</span><br />
 							繼悅讀系後，2010更獨資成立泰嘉開發，開創出專屬於泰嘉美學的水建築，從悅讀水世紀、水工坊、水山硯、水丰景到水舞間…以「上善設計，體貼如水」的建築態度，躍升為南台灣精品建築先驅！
 							</p>
+							
+							<div class='tj_btn edit text' key='press' action="">編輯文字</div>
 						</div>
 						
 					</section>
 					
 					<section id="attitude"  style="margin-top: 150px;">
 						
-						
-						<img id="attitude_tit" src='uploads/about_title_2.png' style="
+						<div style="
 						left: -360px;
 					    position: absolute;
-					    top: -370px;"/>
-						
+					    top: -370px;">
+					    	<img id="attitude_tit" src='uploads/about_title_2.png'/>
+					    	<div class='tj_btn edit image' key='attitude' action="">編輯標題</div>
+					    </div>
 							
 						<div class="content_title" style="
 						left: -350px;
@@ -233,16 +266,18 @@
 							它是消費者一輩子的家，也是城市一世紀的風景，
 							不該用賺錢的單一角度來衡量。
 							</p>
+							
+							<div class='tj_btn edit text' key='attitude' action="">編輯文字</div>
 						</div>
 
 						<div class="v_line" style='left: 100px;'></div>
-						
-						<img id='attitude_img' src='uploads/about_img2.jpg' style="
+						<div style="
 						left: 120px;
 					    position: absolute;
-					    top: -380px;" />
-						
-						
+					    top: -380px;">
+							<img id='attitude_img' src='uploads/about_img2.jpg' />
+							<div class='tj_btn edit image' key='attitude' action="">編輯圖片</div>
+						</div>
 						
 					</section>
 					
@@ -257,16 +292,22 @@
 							background-color: #fff;">
 							<!-- <iframe width="640" height="360" src="http://www.youtube.com/embed/iIQ6VqFEN0o" frameborder="0" allowfullscreen></iframe> -->
 							<div class="no_mov">建構中</div>
+							
+							<div class='tj_btn edit movie' key='documentary' action="">編輯影片</div>
 						</div>
 						
 					</section>
 				<!-- </section> -->
 		<!-- 		end of about -->
 				<section id="recent" >
-					<img src='uploads/recent_tit.png'  style="
+					
+					<div style="
 					left: -320px;
 				    position: absolute;
-				    top: -270px;" />
+				    top: -270px;">
+						<img src='uploads/recent_tit.png' />
+					    <div class='tj_btn edit image' key='recent' action="">編輯標題</div>
+				    </div>
 				    
 				    <div id='recent_line' class="h_line" style='
 				    top: -160px;
@@ -304,6 +345,8 @@
 						<p>
 						泰嘉建築都成功改變當區地貌、創新當區房價並連奪多座國家卓越建設獎及建築園冶獎之專業獎項高度肯定！
 						</p>
+						
+						<div class='tj_btn edit text' key='work' action="">編輯文字</div>
 					</div>
 					
 					<div class="v_line" style='
@@ -324,13 +367,7 @@
 				<div id="work_content">
 					
 				</div>
-					
-				<div id="years_widget">
-					<div class="number"></div>
-					<div class="number"></div>
-					<div class="number"></div>
-					<div class="number"></div>
-				</div>
+				
 				<!-- end of works -->
 				<!-- start of story -->
 				<section id="story">

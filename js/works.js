@@ -3,8 +3,6 @@ var Work = function(){
 	var work_logo_index = 0;
 	var isInit = false;
 	
-	var hasWork = false;
-	
 	var markup = '\
 	<section id="project-${id}" year="${year}" class="work work_item">\
 	</section>';
@@ -50,12 +48,10 @@ var Work = function(){
 	';
 	
 	var init = function(){
-		// if(!hasWork) {
-			// hasWork = true;
-			// createWork();
-		// }else{
-			// return;
-		// }
+		
+		if(isInit) return;
+		isInit = true;
+				createWork();
 		
 		$(".work_item .media .thumb:not(.active)").live("click", function(){
 			var media = $(this).parents('.media');
@@ -128,7 +124,7 @@ var Work = function(){
 		var wlist = $("#work #logo_list");
 		
 		$("#work").find(".next_btn, .prev_btn").live("click", function(){
-				
+			
 			if($(this).is(".active")) return;
 			
 			if($(this).is(".next_btn")){
@@ -197,6 +193,8 @@ var Work = function(){
 	};
 	
 	var createWork = function(){
+		
+		
 		$.template( "workItem", markup );
 		$.template( "logoItem", markup2 );
 		$.template( "workItemBody", markup_work_body);
@@ -206,8 +204,6 @@ var Work = function(){
 		var mydata = '';
 		var year_con, work_con = $("#work_content");
 		var logo_list = $("#logo_list");
-		
-		console.log("createWork");
 		
 		$.each(yl, function(i, val){
 			yd = data[val];
@@ -264,48 +260,16 @@ var Work = function(){
 		}
 	};
 	
-	var refreshYear = function(){
-		
-		var inview = $(".work_item:in-viewport:eq(0)");
-		var yw = $("#years_widget");
-		var y;
-		
-		var ty = "";
-		
-		if(inwork.length){
-			ty = inview.attr('year');
-		}
-		else if(yw.is(":visible")){
-			ty = "0000";
-		}
-
-		setYear(ty);
-		yw.data('year', ty);
-	};
 	
-	var setYear = function(year){
-		if(year == pyear || !year) return;
-		pyear = year;
-				
-		var h = 138;
-		var arr = year.split('');
-		$("#years_widget").show();	
-		$.each(arr, function(i){
-			$("#years_widget .number:eq(" + i + ")").stop().animate({
-				backgroundPosition: '0 -' + parseInt(this)*h + 'px'
-			}, 300);
-		});
-	};
 		
 	return {
 		init: init
 		, resize: workResize
-		, refreshYear: refreshYear
 		, createWork: createWork
 		, buildProject: buildProject
 	};
 }();
 
 $(function(){
-	// Work.init();	Work.createWork();
+	Work.init();	// Work.createWork();
 });

@@ -154,7 +154,7 @@ var PhotoWall = function(){
 			, fadeIn: 300
 		});
 		
-		// setTimeout(pwResize, 500);
+		setTimeout(pwResize, 300);
 	};
 	
 	

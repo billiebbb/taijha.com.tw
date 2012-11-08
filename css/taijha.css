@@ -132,7 +132,7 @@ article section {
 	width: 300px;
 	top: 50%;
 	margin-top: -148px;
-	z-index: 500;
+	z-index: 50;
 	display: none;
 }
 
@@ -319,7 +319,7 @@ li a {
 	margin: 0 2px 2px 0;
 /*	border: #fff solid 1px;*/
 /*	overflow: hidden;*/
-	background-color: #cccccc;
+	background-color: #fff;
 	margin-bottom: 5px;
 	position: relative;
 	z-index: 480;
@@ -751,8 +751,8 @@ a, a:active, a:focus, a:hover, input {
 	height: 138px;
 	position: fixed;	
 	display: none;
-	right: 5%;
-	top: 10%;
+	right: 100px;
+	top: 10px;
 	z-index: 10;
 	display: none;
 }
@@ -930,6 +930,13 @@ a, a:active, a:focus, a:hover, input {
 .tj_btn [class*=icon-] {
 	margin: 10px 5px 0 0;
 	float: left;
+}
+
+.tj_btn.edit {
+	top: -42px;
+	left: 0px;
+	position: absolute;
+	z-index: 320;
 }
 
 .work_item .media .slider_controller .full_btn:hover, .tj_btn:hover {
@@ -1318,4 +1325,16 @@ a, a:active, a:focus, a:hover, input {
 	color: #fff;
 	background-color: #000000;
 	font-size: 18px;
+}
+
+.tj_editor_container .text_editor {
+	height: 260px;
+	overflow: auto;	
+}
+
+.tj_editor_container .file_upload_btn {
+	left: 50%;
+	margin-left: -80px;
+	width: 160px;
+	position: relative;
 }

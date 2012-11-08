@@ -231,13 +231,20 @@ $(function(){
 			key1 = 'about';
 		}
 		else if(reg.test(key1)){
+			
 			key2 = next_section.attr('year');
 			key1 = 'work';
+			
+			YearWidget.show(key2);
 			
 			if(!next_section.data("init")){
 				Work.buildProject(next_section);
 			}
 		}
+		else if(!reg.test(key1)){
+			YearWidget.hide();
+		}
+		
 		
 		Menu.setCurrentMenu(key1, key2);
 		

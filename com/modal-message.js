@@ -29,7 +29,7 @@ if(!window['ModalMessage']){
 				
 				modal.modal(opts);
 				modal.on('show',function(){
-					modal.css('top', Math.ceil( $(window).height()/2 + modal.height()/2) + 50 + 'px');
+					// modal.css('marginTop', Math.ceil( modal.height()/2) + 50 + 'px');
 				});
 			};
 			
@@ -39,9 +39,11 @@ if(!window['ModalMessage']){
 			var close = modal.find('button.close');
 			var body = modal.find('.modal-body');
 			
-			if(!opts.title){
-				
-			}
+			
+			
+			if(opts.onShow){
+				opts.onShow();
+			};
 			
 			if(opts.hideCancel){
 				modal.find('button.close, .cancel').hide();
