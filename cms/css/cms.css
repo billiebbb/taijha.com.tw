@@ -1,0 +1,50 @@
+html ,body{
+	width: 100%;
+	height: 100%;
+	font-family: "微軟正黑體", Arial, Helvetica,sans-serif,STHeiti Light,"儷黑 Pro",LiHei Pro,Microsoft Yahei,Microsoft JhengHei, "新細明體";
+}
+
+body{
+	background-image: url(../images/bg_wall.jpg);
+}
+
+.login_block {
+	width: 200px;
+	position: fixed;
+	left: 50%;
+	top: 50%;
+	margin-left: -100px;
+	margin-top: -155px;
+}
+
+.login_form {
+	padding: 20px;
+	width: 200px;
+	height: 150px;
+	background-color: #fff;
+	border-radius: 5px;
+	font-size: 12px;
+	box-shadow: 0 0 20px 5px #ccc;
+}
+
+.login_form .input_field {
+	font-size: 12px;
+	height: 28px;
+	line-height: 28px;
+	width: 190px;
+	padding: 0 5px;
+}
+
+#login_btn {
+	float: right;
+}
+
+.logo {
+	width: 175px;
+	height: 38px;
+	position: relative;
+	margin: 20px 30px 10px;
+	background-image: url(../images/logo_black.png);
+}
+
+

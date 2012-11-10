@@ -1,8 +1,8 @@
 <?php
 	$db_info['server'] = "localhost";
-	$db_info['name'] = "taijia";
 	$db_info['user'] = "root";
 	$db_info['pass'] = "50505050";
+	$db_info['name'] = "taijia";
 	
 	// $conn = mysql_connect($db_info['server'], $db_info['user'], $db_info['pass']) or trigger_error("Could not connect: " . mysql_error());
 	// mysql_select_db($db_info['name'], $conn) or trigger_error("Could not connect: " . mysql_error());	

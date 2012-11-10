@@ -927,13 +927,17 @@ a, a:active, a:focus, a:hover, input {
 	width: auto;
 }
 
+.tj_btn.red, .tj_btn.edit{
+	background-color: #ff3333;
+}
+
 .tj_btn [class*=icon-] {
 	margin: 10px 5px 0 0;
 	float: left;
 }
 
 .tj_btn.edit {
-	top: -42px;
+	top: -20px;
 	left: 0px;
 	position: absolute;
 	z-index: 320;
@@ -941,6 +945,10 @@ a, a:active, a:focus, a:hover, input {
 
 .work_item .media .slider_controller .full_btn:hover, .tj_btn:hover {
 	background-color: #000;
+}
+
+.tj_btn.red:hover, .tj_btn.edit:hover {
+	background-color: #cc0000;
 }
 
 .tj_btn.active, .tj_btn.active:hover {
@@ -1335,6 +1343,21 @@ a, a:active, a:focus, a:hover, input {
 .tj_editor_container .file_upload_btn {
 	left: 50%;
 	margin-left: -80px;
+	margin-bottom: 20px;
 	width: 160px;
 	position: relative;
 }
+
+#logout_btn{
+	position: fixed;
+	bottom: 0;
+	left: 100px;
+	z-index: 1000px;
+}
+
+.tj_editor_container .img_meta {
+	width: 100%;
+	text-align: center;
+	margin: 20px 0;
+}
+ 

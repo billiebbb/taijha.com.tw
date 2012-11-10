@@ -1,10 +1,17 @@
+<?php
+	require_once("db_config.inc.php");
+	
+	session_start();
+
+?>
 <!DOCTYPE html>
 <html>
 	<head>
 		<meta charset="utf-8" />
 		
 		<title>泰嘉開發</title>
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" >
+		
+		<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
 	    <meta name="author" content="Tom Shih,tom@riversense.tw" >
 	    <meta name="description" content="泰嘉建設開發" >
 	    <meta name="key" content="泰嘉開發,泰嘉,泰嘉建設,TAIJIA,TAI-JIA,taijia,tai-jia,建設開發,建築設計,水建築,建案開發,預推建案,統發不動產,統發建設,悅讀系建築,高雄,水世紀,水工坊,悅讀工坊,愛上悅讀,悅讀知音,悅讀水世紀,水山硯,水丰景,高雄建案,高雄開發,高雄建設,高雄建築,關於泰嘉,熱銷新案,歷年作品,成家故事,廣告欣賞,泰嘉紀實錄影音檔,沿革,態度" >
@@ -23,12 +30,11 @@
 		<link href='http://fonts.googleapis.com/css?family=Rochester' rel='stylesheet' type='text/css'>
 		<link href="com/fileuploader/fileuploader.css" rel="stylesheet">
 		
-		<!-- <link href="com/jquery-ui-1.9.1.custom/css/ui-lightness/jquery-ui-1.9.1.custom.min.css" rel="stylesheet"> -->
-<!-- 		<link href='com/jquery-ui-1.8.24/css/ui-lightness/jquery-ui-1.8.24.custom.css' rel='stylesheet' type='text/css'> -->
 		
 		<!--[if lt IE 9]>
 		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 		<![endif]-->
+		
 		<script type="text/javascript"
 	      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA2nJnFfrLi1fzjNx3vQdSHp5HQWv1wPjw&sensor=true">
 	    </script>
@@ -42,6 +48,7 @@
 		<script src="com/jquery.backgroundPosition.js" type="text/javascript"></script>
 		<script src="com/parse-css-number.js" type="text/javascript"></script>
 		<script src="com/jquery.tmpl.min.js" type="text/javascript"></script>
+		<script src="com/json2.js" type="text/javascript"></script>
 		<script src="com/jquery.masonry.js" type="text/javascript"></script>
 		<script src="com/resize-to-parent.js" type="text/javascript"></script>
 		<script src="com/jquery.zoom-min.js" type="text/javascript"></script>
@@ -58,12 +65,13 @@
 		<script src="com/jquery.coverscroll.min.js" type="text/javascript"></script>
 		<script src="com/jquery.filter_input.js" type="text/javascript"></script>
 		
+		
 		<script src="com/check-email.js"></script>
 		
 		<script src="com/redactor/redactor.js"></script>
 		<script src="com/redactor/langs/zh_tw.js"></script>
 		
-		<script src="com/fileuploader/fileuploader.min.js"></script>
+		<script src="com/fileuploader/fileuploader.js"></script>
 		
 		<script src="com/jquery.ui.touch-punch/jquery.ui.touch-punch.min.js" type="text/javascript"></script>
 		
@@ -81,7 +89,7 @@
 		
 		<!-- load all data -->
 		<script src='js/works_data.js' type="text/javascript"></script>
-		<script src='js/recent_data.js' type="text/javascript"></script>
+<!-- 		<script src='js/recent_data.js' type="text/javascript"></script> -->
 		<script src='js/story_data.js' type="text/javascript"></script>
 		<script src='js/presale_data.js' type="text/javascript"></script>
 		<script src='js/ad_data.js' type="text/javascript"></script>
@@ -104,13 +112,32 @@
 		<script src='js/ad.js' type="text/javascript"></script>
 		<script src='js/contact.js' type="text/javascript"></script>
 		
+		<?php if($_SESSION["admin"]){ ?>
+			<script src='js/tj_editor.js' type="text/javascript"></script>
+		<?php } ?>
 		
-		<script src='js/tj_editor.js' type="text/javascript"></script>
-		
+		<!-- recent data -->
+		<script type="text/javascript">
+			<?php
+				$query = "SELECT A.p_id AS p_id, B.m_id AS m_id, A.title AS name, A.content AS link, B.url AS image";
+				$query .= " FROM tj_post AS A, tj_media AS B";
+				$query .= " WHERE A.category='recent_project' AND A.p_id=B.p_id ORDER BY A.p_id ASC";
+				
+				$result = $mysqli->query($query);
+				$json = array();
+				
+				while ($row = $result->fetch_assoc()) {
+			    	$arr = array("p_id"=>$row["p_id"], "name"=>$row["name"], "link"=>$row["link"], "image"=>"uploads/".$row["image"]);
+					array_push($json, $arr);
+			    }
+			?>
+			
+			var RecentData = <?php echo json_encode($json); ?>;
+		</script>
 		
 		
 		<script type="text/javascript">
-
+		
 		  var _gaq = _gaq || [];
 		  _gaq.push(['_setAccount', 'UA-36121338-1']);
 		  _gaq.push(['_setDomainName', 'taijia.com.tw']);
@@ -124,6 +151,13 @@
 		  })();
 		
 		</script>
+		
+		<?php if($_SESSION["admin"]){ ?>
+		<script type="text/javascript">
+			var is_admin = true;	
+		</script>
+		<?php } ?>
+		
 		
 	</head>
 	<body>
@@ -140,6 +174,8 @@
 			</div>
 		</div>
 		
+		
+		
 		<div id="wall_bg"></div>
 		<div id="wave_bg"></div>
 		
@@ -150,33 +186,37 @@
 			<div class="number"></div>
 		</div>
 		
+		
+		
 		<div id="page_mark"></div>
 		<!-- <div class="dot_pattern v1"></div>
 		<div class="dot_pattern v2"></div> -->
 		
 		<div id="main">
+			<?php if($_SESSION["admin"]){ ?>
+			<a href="cms/logout.php"><div id="logout_btn" class="tj_btn red">
+				<div class="icon-circle-arrow-up icon-white"></div>
+				登出管理帳號
+			</div></a>
+			<?php } ?>
 			<article>
 			<!-- home content start -->
 				<section id="home" class="active">
 					<div id="home_title" class="content_title">
 						
-						<div class='tj_btn edit text' key='home' action="">編輯文字</div>
+						<?php
+							$query = "SELECT content,p_id FROM tj_post WHERE category='home'";
+							$result = $mysqli->query($query);
+							
+							$obj = $result->fetch_object();
+							echo $obj->content;
+						?>
 						
-						<span style="font-size: 22px; font-weight: normal; color: #808080; font-family: Times New Roman, Times;">2012</span>年，高雄的天空一樣的藍。<br />
-						<p>
-						高雄的建築，一樣有著競相爭豔、分辨不清誰是誰的華麗天際線。<br />
-						但泰嘉「水系列」建築，<br />
-						包括悅讀水世紀、水工坊、水山硯、水丰景、水舞間…，<br />
-						卻以一種清新的姿態，讓高雄的天際線，訴說著另一種不同的聲音！
-						</p>
-						<p>
-						是捨棄市場流行的華麗裝飾的聲音，是以「水」為感性設計主軸的聲音，<br>
-						是黑白經典格柵立面的聲音，是簡潔純粹建築線條的聲音…<br>
-						</p>
-						<p>
-						這些聲音都來自泰嘉建築團隊如水般匯聚的能量，<br>
-						一點一滴創造出屬於泰嘉建築的生活美學。<br>
-						</p>
+						<?php if($_SESSION["admin"]){ ?>
+							<div class='tj_btn edit text' action="cms/edit_text.php" p_id="<?php echo $obj->p_id; ?>">
+								<div class="icon-pencil icon-white"></div>編輯文字
+							</div>
+						<?php } ?>
 					</div>
 					<ul id="photo_wall" class="photo_wall">
 					</ul>
@@ -189,94 +229,115 @@
 				<!-- <section id="about"> -->
 					<section id="press">
 						
-						<div style="
-						left: -370px;
-					    position: absolute;
-					    top: -200px;
-					    ">
-							<img src='uploads/about_img1.jpg' id='press_img' />
-						    <div class='tj_btn edit image' key='press' action="">編輯圖片</div>
-					    </div>
-						
-						<div style="
-						left: -370px;
-					    position: absolute;
-					    top: 50px;
-						">
-							<img id="press_tit" src='uploads/about_title_1.png' />
-							<div class='tj_btn edit image' key='press' action="">編輯標題</div>
-						</div>
 						
 						<div class="v_line" ></div>
 						
 						<div class="content_title span10" style="position: absolute;
 					    top: -200px;
 					    width: 400px;" >
-							<p>
-							<span style="font-size: 18px; font-weight: bold; line-height: 34px;">統發不動產  1997</span><br />
-							統發自1997成立至今，共締造了6千多戶之房屋銷售實績，長期累積第一線傾聽消費者的建築意見，讓統發不動產「實用建築趨勢觀念」大大奠基。
-							</p>
-							<p>
-							<span style="font-size: 18px; font-weight: bold; line-height: 34px;">悅讀系建築</span><br />
-							演而優則導，統發於2006年自房屋代銷轉型精進與合作業主成立泰緯建設，將傳承自代銷業的建築規劃力，導入建案規劃並催生悅讀系列建築各案在統發的巧思妙手包裝下，呈現創意迭起之建築新思維。
-							</p>
-							<p>
-							<span style="font-size: 18px; font-weight: bold; line-height: 34px;">泰嘉「水建築」</span><br />
-							繼悅讀系後，2010更獨資成立泰嘉開發，開創出專屬於泰嘉美學的水建築，從悅讀水世紀、水工坊、水山硯、水丰景到水舞間…以「上善設計，體貼如水」的建築態度，躍升為南台灣精品建築先驅！
-							</p>
+							<?php
+								$query = "SELECT content FROM tj_post WHERE category='press'";
+								$result = $mysqli->query($query);
+								
+								
+								$obj = $result->fetch_object();
+								echo $obj->content;
+							?>
 							
-							<div class='tj_btn edit text' key='press' action="">編輯文字</div>
+							<?php if($_SESSION["admin"]){ ?>
+								<div class='tj_btn edit text' key='press' action="cms/edit_text.php" p_id="<?php echo $obj->p_id; ?>"><div class="icon-pencil icon-white"></div>編輯文字</div>
+							<?php } ?>
 						</div>
 						
+						<div style="
+						left: -370px;
+					    position: absolute;
+					    top: 50px;
+						">
+							<?php
+								$query = "SELECT m_id, url FROM tj_media WHERE category='press' AND m_type='title'";
+								$result = $mysqli->query($query);
+								$obj = $result->fetch_object();
+							?>
+							<img id="press_tit" src='uploads/<?php echo $obj->url; ?>' />
+							
+							<?php if($_SESSION["admin"]){ ?>
+								<div class='tj_btn edit image' action="cms/edit_media.php?m_id=<?php echo $obj->m_id; ?>"><div class="icon-picture icon-white"></div>編輯標題圖片</div>
+							<?php } ?>
+							
+						</div>
+						
+						<div style="
+						left: -370px;
+					    position: absolute;
+					    top: -200px;
+					    ">
+					    	<?php
+								$query = "SELECT m_id, url FROM tj_media WHERE category='press' AND m_type='image'";
+								$result = $mysqli->query($query);
+								$obj = $result->fetch_object();
+							?>
+							<img src='uploads/<?php echo $obj->url; ?>' />
+							
+						    <?php if($_SESSION["admin"]){ ?>
+						    	<div class='tj_btn edit image' action="cms/edit_media.php?m_id=<?php echo $obj->m_id; ?>"><div class="icon-picture icon-white"></div>編輯圖片</div>
+					    	<?php } ?>
+					    </div>
 					</section>
 					
 					<section id="attitude"  style="margin-top: 150px;">
+						
+						<div class="content_title" style="
+						left: -360px;
+					    position: absolute;
+					    top: -200px;
+					    width: 430px" >
+							<?php
+								$query = "SELECT content FROM tj_post WHERE category='attitude'";
+								$result = $mysqli->query($query);
+								
+								
+								$obj = $result->fetch_object();
+								echo $obj->content;
+							?>
+							
+							<?php if($_SESSION["admin"]){ ?>
+								<div class='tj_btn edit text' key='attitude' action="cms/edit_text.php" p_id="<?php echo $obj->p_id; ?>"><div class="icon-pencil icon-white"></div>編輯文字</div>
+							<?php } ?>
+						</div>
 						
 						<div style="
 						left: -360px;
 					    position: absolute;
 					    top: -370px;">
-					    	<img id="attitude_tit" src='uploads/about_title_2.png'/>
-					    	<div class='tj_btn edit image' key='attitude' action="">編輯標題</div>
+					    	<?php
+								$query = "SELECT m_id, url FROM tj_media WHERE category='attitude' AND m_type='title'";
+								$result = $mysqli->query($query);
+								$obj = $result->fetch_object();
+							?>
+							<img src='uploads/<?php echo $obj->url; ?>' />
+					    	
+					    	<?php if($_SESSION["admin"]){ ?>
+					    		<div class='tj_btn edit image' action="cms/edit_media.php?m_id=<?php echo $obj->m_id; ?>"><div class="icon-picture icon-white"></div>編輯標題圖片</div>
+				    		<?php } ?>
 					    </div>
 							
-						<div class="content_title" style="
-						left: -350px;
-					    position: absolute;
-					    top: -180px;
-					    width: 430px" >
-							<p>
-							芬蘭裔美籍建築師埃羅．沙里寧說：
-							「建築就像一本打開的書，
-							  從中你能看到一座城市的抱負。」
-							</p>
-							<p>
-							對泰嘉建築而言，建築是值得閱讀一輩子的信仰，
-							從外觀美學、造型編排、空間章節，到設計概念，
-							不僅傳達創作者對建築的專注態度，
-							型塑了居住者的生活方式，
-							也主導整個城市的美學印象。
-							</p>
-							因此，在成本與設計考量的天秤下，
-							泰嘉建築始終以「用心蓋好房子」為信仰，
-							不惜犧牲利潤來成就自身的使命感。
-							</p>
-							<p>
-							因為建築與一般產業不同，
-							它是消費者一輩子的家，也是城市一世紀的風景，
-							不該用賺錢的單一角度來衡量。
-							</p>
-							
-							<div class='tj_btn edit text' key='attitude' action="">編輯文字</div>
-						</div>
 
 						<div class="v_line" style='left: 100px;'></div>
+						
 						<div style="
 						left: 120px;
 					    position: absolute;
 					    top: -380px;">
-							<img id='attitude_img' src='uploads/about_img2.jpg' />
-							<div class='tj_btn edit image' key='attitude' action="">編輯圖片</div>
+							<?php
+								$query = "SELECT m_id, url FROM tj_media WHERE category='attitude' AND m_type='image'";
+								$result = $mysqli->query($query);
+								$obj = $result->fetch_object();
+							?>
+							<img src='uploads/<?php echo $obj->url; ?>' />
+							<?php if($_SESSION["admin"]){ ?>
+								<div class='tj_btn edit image' action="cms/edit_media.php?m_type=image&p_id=<?php echo $obj->p_id; ?>"><div class="icon-picture icon-white"></div>編輯圖片</div>
+							<?php } ?>
 						</div>
 						
 					</section>
@@ -290,10 +351,23 @@
 						   	position: absolute; 
 						    padding: 10px;
 							background-color: #fff;">
-							<!-- <iframe width="640" height="360" src="http://www.youtube.com/embed/iIQ6VqFEN0o" frameborder="0" allowfullscreen></iframe> -->
-							<div class="no_mov">建構中</div>
+							<?php
+								$query = "SELECT content FROM tj_post WHERE category='documentary'";
+								$result = $mysqli->query($query);
+								$obj = $result->fetch_object();
+								
+								if($obj->content != NULL){
+									echo $obj->content;
+								}else{
+							?>
+								<div class="no_mov">建構中</div>
+							<?php
+								}
+							?>
 							
-							<div class='tj_btn edit movie' key='documentary' action="">編輯影片</div>
+							<?php if($_SESSION["admin"]){ ?>
+								<div class='tj_btn edit movie' key='documentary' action="cms/edit_text.php" p_id="<?php echo $obj->p_id; ?>">編輯影片</div>
+							<?php } ?>
 						</div>
 						
 					</section>
@@ -305,8 +379,16 @@
 					left: -320px;
 				    position: absolute;
 				    top: -270px;">
-						<img src='uploads/recent_tit.png' />
-					    <div class='tj_btn edit image' key='recent' action="">編輯標題</div>
+				    	<?php
+							$query = "SELECT m_id, url FROM tj_media WHERE category='recent' AND m_type='title'";
+							$result = $mysqli->query($query);
+							$obj = $result->fetch_object();
+						?>
+						<img src='uploads/<?php echo $obj->url; ?>' />
+						
+						<?php if($_SESSION["admin"]){ ?>
+					    	<div class='tj_btn edit image' action="cms/edit_media.php?m_id=<?php echo $obj->m_id; ?>"><div class="icon-picture icon-white"></div>編輯標題圖片</div>
+					    <?php } ?>
 				    </div>
 				    
 				    <div id='recent_line' class="h_line" style='
@@ -328,25 +410,41 @@
 				
 				<!-- start of works -->
 				<section id="work">
-					<img id="work_title" src='uploads/works_tit.png' style="
-					left: -390px;
-				    position: absolute;
-				    top: -220px;" />
-					
+						
 					<div class="content_title" style="
 					left: -320px;
 				    position: absolute;
 				    top: -100px;
 				    width: 220px;
 					">
-						<p>
-						打造一個品牌很容易，累積價值的深度卻不簡單，泰嘉開發，不願追隨大同小異的建築模式，放膽追求異中求變的創作個性，從悅讀水世紀、水工坊、水山硯、水丰景到水舞間…
-						</p>
-						<p>
-						泰嘉建築都成功改變當區地貌、創新當區房價並連奪多座國家卓越建設獎及建築園冶獎之專業獎項高度肯定！
-						</p>
 						
-						<div class='tj_btn edit text' key='work' action="">編輯文字</div>
+						<?php
+							$query = "SELECT content FROM tj_post WHERE category='work'";
+							$result = $mysqli->query($query);
+							
+							
+							$obj = $result->fetch_object();
+							echo $obj->content;
+						?>
+						<?php if($_SESSION["admin"]){ ?>
+							<div class='tj_btn edit text' key='work' action="cms/edit_text.php" p_id="<?php echo $obj->p_id; ?>"><div class="icon-pencil icon-white"></div>編輯文字</div>
+						<?php } ?>
+					</div>
+					
+					<div style="
+						left: -390px;
+					    position: absolute;
+					    top: -220px;">
+					    
+			    			<?php
+								$query = "SELECT m_id, url FROM tj_media WHERE category='work' AND m_type='title'";
+								$result = $mysqli->query($query);
+								$obj = $result->fetch_object();
+							?>
+							<img src='uploads/<?php echo $obj->url; ?>' />
+			    		<?php if($_SESSION["admin"]){ ?>
+				    		<div class='tj_btn edit image' action="cms/edit_media.php?m_id=<?php echo $obj->m_id; ?>"><div class="icon-picture icon-white"></div>編輯標題圖片</div>
+			    		<?php } ?>
 					</div>
 					
 					<div class="v_line" style='
@@ -375,17 +473,39 @@
 				    left: -390px;
 				    '></div>
 				    
-					<img class="title_img" src='uploads/story_title.png'  style="
+				    <div class="title_img" style="
+						left: -360px;
+					    position: absolute;
+					    top: -240px;
+					    ">
+					    
+				    	<?php
+							$query = "SELECT m_id, url FROM tj_media WHERE category='story' AND m_type='title'";
+							$result = $mysqli->query($query);
+							$obj = $result->fetch_object();
+						?>
+						<img src='uploads/<?php echo $obj->url; ?>' />
+			    		<?php if($_SESSION["admin"]){ ?>
+				    		<div class='tj_btn edit image' action="cms/edit_media.php?m_id=<?php echo $obj->m_id; ?>"><div class="icon-picture icon-white"></div>編輯標題圖片</div>
+			    		<?php } ?>	
+				    </div>
+					
+				    <div class="title_img" style="
 					left: -360px;
 				    position: absolute;
-				    top: -240px;
-				    " />
-				    
-				    <img class="title_img" src='images/story_pic.png'  style="
-					left: -340px;
-				    position: absolute;
 				    top: -20px;
-				    " />			    
+				    ">
+				    	<?php
+							$query = "SELECT m_id, url FROM tj_media WHERE category='story' AND m_type='image'";
+							$result = $mysqli->query($query);
+							$obj = $result->fetch_object();
+						?>
+						<img src='uploads/<?php echo $obj->url; ?>' />
+			    		<?php if($_SESSION["admin"]){ ?>
+				    		<div class='tj_btn edit image' action="cms/edit_media.php?m_id=<?php echo $obj->m_id; ?>"><div class="icon-picture icon-white"></div>編輯圖片</div>
+			    		<?php } ?>	
+				    </div>
+				    			    
 					
 					<div class="content_title" style="
 					left: -360px;
@@ -393,10 +513,18 @@
 				    top: -120px;
 				    width: 340px;
 					">
-						每棟建築，都在尋找與它有著同樣頻率與對味的人。<br>
-						就像擅彈琴的伯牙，與懂欣賞的子期，<br>
-						交流出的火花，是一種懂得，彼此珍惜著。<br>
-						泰嘉建築與住在裡面的人，也是。
+						
+						<?php
+							$query = "SELECT content FROM tj_post WHERE category='story'";
+							$result = $mysqli->query($query);
+							
+							$obj = $result->fetch_object();
+							echo $obj->content;
+						?>
+						
+						<?php if($_SESSION["admin"]){ ?>
+							<div class='tj_btn edit text' action="cms/edit_text.php" p_id="<?php echo $obj->p_id; ?>"><div class="icon-pencil icon-white"></div>編輯文字</div>
+						<?php } ?>
 					</div>
 					
 					
@@ -456,11 +584,7 @@
 				            </thead>
 				            <tbody id="story_list"></tbody>
 						</table>
-						
-						
 					</div>
-					
-					
 				</section>
 				<!-- end of story -->
 				

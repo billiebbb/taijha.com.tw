@@ -229,9 +229,11 @@ var Work = function(){
 		// media.width($(window).width() * 0.6);
 		
 		if($(window).width() > 1280){
+			$("#work .content_title").width(290).css("left", "-390px");
 			media.addClass('l');
 		}
 		else{
+			$("#work .content_title").width(220).css("left", "-320px");
 			media.removeClass('l');
 		}
 		
