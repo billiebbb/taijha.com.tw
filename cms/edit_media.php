@@ -7,7 +7,7 @@
 	header('Content-Type: application/json');
 	
 		
-	if($_SESSION["admin"] !== TRUE){		
+	if($_SESSION["admin"] !== TRUE){
 		$json = array("error" => TRUE, "msg" => "未登入管理帳號");
 		echo json_encode($json);
 	}

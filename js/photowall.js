@@ -1,8 +1,8 @@
 var PhotoWall = function(){
 	var wall, tmpl;
 	var collist = ['col1', 'col2', 'col3'];
-	var coltype = ['blank', 'img', 'img', 'img', 'img', 'img'];
-	var img_amount = 15, img_count = 0;
+	var coltype = ['blank', 'blank', 'blank', 'img', 'img', 'img', 'img', 'img'];
+	var img_amount = 8, img_count = 0;
 	var hasImage = {};
 	var initialized = false;
 	

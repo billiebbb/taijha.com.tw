@@ -172,8 +172,9 @@ var WorksData = function(){
 	];
 	
 	var setWorksData = function(data){
-		workSession = data;
-		works = data.works;
+		// workSession = data;
+		// console.dir(data);
+		works = data;
 	};
 	
 	var getRecent = function(){

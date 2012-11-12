@@ -1,23 +1,70 @@
 var Recent = function(){
 	var markup = "\
-	<a href='${link}' target='blank'>\
-		<div class='recent_item'>\
-			<div class='body'>\
-				<img src='${image}' />\
-			</div>\
-			<div class='footer'>\
-					<div class='info_btn'>前往官方網站</div>\
-			</div>\
-		</div>\
-	</a>";	
-	
+		<div class='recent_item' p_id='${p_id}' title='${name}'>\
+			<a href='${link}' target='blank'>\
+				<div class='body'>\
+					<img src='uploads/${image}' />\
+				</div>\
+				<div class='footer'>\
+						<div class='info_btn'>前往官方網站</div>\
+				</div>\
+			</a>\
+			<div class='tj_btn edit image' action='cms/edit_media.php?m_id=${m_id}'>\
+	    		<div class='icon-picture icon-white'></div>編輯圖片\
+    		</div>\
+    		<div class='tj_btn edit remove' p_id='${p_id}'>\
+	    		<div class='icon-remove icon-white'></div>\
+    		</div>\
+		</div>";	
+	
+	var current_idx = 0;
+	var display_num = 4;	
 	var init = function(){
 		
-		createRecent();
-		$(window).resize(recentResize);
+		// createRecent();
+		// $(window).resize(recentResize);
 		
 		// .scroll(recentScroll);
+		setDisplay();
 		
+		$("#recent_main").find(".next_btn, .prev_btn").live("click", function(e){
+			if($(this).is(".next_btn")){
+				current_idx++;
+			}
+			else{
+				current_idx--;
+			}
+			
+			setDisplay();
+		});
+	};
+	
+	var setDisplay = function(){
+		var container = $("#recent_content");
+		var pos;
+		var sp = current_idx;
+		var ep = current_idx + display_num;
+		$.each(container.find(".recent_item"), function(i){
+			if(i<sp){
+				pos = -$(window).width()/2;
+			}
+			else if(i>=ep){
+				pos = $(window).width()*1.5;
+			}
+			else{
+				pos = 190 * (i - current_idx);
+			}
+			
+			$(this).stop().animate({left: pos}, 500);
+			
+		});
+	}
+	
+	var addRecent = function(data){
+		$.template( "recentItem", markup );
+		$.tmpl( "recentItem", data).css("left", "-500px").prependTo( "#recent_content" );
+		
+		recentResize();
 	};
 	
 	var createRecent = function(){
@@ -43,7 +90,8 @@ var Recent = function(){
 		// }
 		
 		$(".recent_item").find(".loading").removeClass('loading');
-
+		
+		setDisplay();
 		
 		// $('.recent_item .pic img').resizeToParent();
 		// $('.recent_item .logo img').resizeToParent({type: 'fixed'});
@@ -68,7 +116,9 @@ var Recent = function(){
 	
 	return {
 		init: init
+		,addRecent: addRecent
 		,recentResize: recentResize
+		,setDisplay: setDisplay
 	};
 }();
 

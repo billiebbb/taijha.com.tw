@@ -931,14 +931,21 @@ a, a:active, a:focus, a:hover, input {
 	background-color: #ff3333;
 }
 
+.tj_btn.edit.remove {
+	right: 0;
+}
+
 .tj_btn [class*=icon-] {
 	margin: 10px 5px 0 0;
 	float: left;
 }
 
+.tj_btn.edit.remove  [class*=icon-] {
+	margin: 10px 0 0;
+}
+
 .tj_btn.edit {
-	top: -20px;
-	left: 0px;
+	top: 0;
 	position: absolute;
 	z-index: 320;
 }
@@ -1075,14 +1082,16 @@ a, a:active, a:focus, a:hover, input {
 	left: -320px;
     position: absolute;
     top: -140px;
-    width: 780px;
+    width: 740px;
+    height: 420px;
 }
 
 #recent_content .recent_item {
 	margin: 0 20px 20px 0;
 	width: 170px;
-	float: left;
-	position: relative;
+/*	float: left;*/
+	position: absolute;
+	top: 0;
 }
 
 #presale #building {

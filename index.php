@@ -1,5 +1,7 @@
 <?php
 	require_once("db_config.inc.php");
+	require_once("./com/FirePHPCore/FirePHP.class.php");
+	$firephp = FirePHP::getInstance(true);
 	
 	session_start();
 
@@ -119,20 +121,38 @@
 		<!-- recent data -->
 		<script type="text/javascript">
 			<?php
-				$query = "SELECT A.p_id AS p_id, B.m_id AS m_id, A.title AS name, A.content AS link, B.url AS image";
-				$query .= " FROM tj_post AS A, tj_media AS B";
-				$query .= " WHERE A.category='recent_project' AND A.p_id=B.p_id ORDER BY A.p_id ASC";
-				
+				$query = "SELECT title AS name, p_id AS id, content AS year FROM tj_post WHERE category='work_project' ORDER BY update_at DESC";
 				$result = $mysqli->query($query);
+				
 				$json = array();
 				
 				while ($row = $result->fetch_assoc()) {
-			    	$arr = array("p_id"=>$row["p_id"], "name"=>$row["name"], "link"=>$row["link"], "image"=>"uploads/".$row["image"]);
+			    	$arr = array("id"=>$row["id"], "name"=>$row["name"], "year"=>$row["year"]);
+			    	
+			    	
+					$query = "SELECT * FROM tj_media WHERE p_id=".$row['id'];
+					// $firephp->log($query);					
+					$mresult = $mysqli->query($query);
+					
+					$images = array();
+					while ($mrow = $mresult->fetch_assoc()) {
+						if($mrow["m_type"] == "logo"){
+							$arr["logo"] = 'uploads/'.$mrow["url"];
+						}
+						else if($mrow["m_type"] == "info"){
+							$arr["subtitle"] = 'uploads/'.$mrow["url"];
+						}
+						else if($mrow["m_type"] == "image"){
+							array_push($images, 'uploads/'.$mrow["url"]);
+						}
+					}
+					
+					$arr["images"] = $images;
 					array_push($json, $arr);
 			    }
 			?>
 			
-			var RecentData = <?php echo json_encode($json); ?>;
+			WorksData.setWorksData(<?php echo json_encode($json); ?>);
 		</script>
 		
 		
@@ -352,7 +372,7 @@
 						    padding: 10px;
 							background-color: #fff;">
 							<?php
-								$query = "SELECT content FROM tj_post WHERE category='documentary'";
+								$query = "SELECT content,p_id FROM tj_post WHERE category='documentary'";
 								$result = $mysqli->query($query);
 								$obj = $result->fetch_object();
 								
@@ -366,7 +386,7 @@
 							?>
 							
 							<?php if($_SESSION["admin"]){ ?>
-								<div class='tj_btn edit movie' key='documentary' action="cms/edit_text.php" p_id="<?php echo $obj->p_id; ?>">編輯影片</div>
+								<div class='tj_btn edit movie' action="cms/edit_text.php" p_id="<?php echo $obj->p_id; ?>">編輯影片</div>
 							<?php } ?>
 						</div>
 						
@@ -396,9 +416,52 @@
 				    '></div>
 					
 					<div id="recent_main">
-						
+						<?php if($_SESSION["admin"]){ ?>
+					    	<div class='tj_btn edit add_recent' action="cms/add_recent.php" style="top: -60px; right: 0;">
+					    		<div class="icon-plus icon-white"></div>新增熱銷新案
+				    		</div>
+					    <?php } ?>
 						<!-- 							start of recent repeat content -->
-						<div id="recent_content" ></div>
+						<div class="prev_btn item arrow" style="position: absolute; left: -60px; z-index: 200;"></div>
+						<div class="next_btn item arrow" style="position: absolute; right: -60px; z-index: 210;"></div>
+						<div id="recent_content" >
+							<?php
+								$query = "SELECT A.p_id AS p_id, B.m_id AS m_id, A.title AS name, A.content AS link, B.url AS image";
+								$query .= " FROM tj_post AS A, tj_media AS B";
+								$query .= " WHERE A.category='recent_project' AND A.p_id=B.p_id ORDER BY A.update_at DESC";
+								
+								$result = $mysqli->query($query);
+								$json = array();
+								
+								while ($row = $result->fetch_assoc()) {
+							    	// $arr = array("p_id"=>$row["p_id"], "name"=>$row["name"], "link"=>$row["link"], "image"=>"uploads/".$row["image"]);
+									// array_push($json, $arr);									?>
+									
+										<div class='recent_item' title='<?php echo $row["name"] ?>' p_id='<?php $row["p_id"]?>'>
+											<a href='<?php echo $row["link"]; ?>' target='blank'>
+												<div class='body'>
+													<img src='uploads/<?php echo $row["image"]; ?>' />
+												</div>
+												<div class='footer'>
+														<div class='info_btn'>前往官方網站</div>
+												</div>
+											</a>
+											<?php if($_SESSION["admin"]){ ?>
+										    	<div class='tj_btn edit image' action="cms/edit_media.php?m_id=<?php echo $row["m_id"]; ?>">
+										    		<div class="icon-picture icon-white"></div>編輯圖片
+									    		</div>
+									    		<div class='tj_btn edit remove' p_id='<?php echo $row["p_id"]; ?>'>
+										    		<div class='icon-remove icon-white'></div>
+									    		</div>
+										    <?php } ?>
+										</div>
+										
+									
+									
+									<?php
+							    }
+							?>
+						</div>
 						<!-- 							end of recent content repeat -->		
 						
 					</div>
