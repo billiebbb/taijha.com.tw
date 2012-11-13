@@ -1357,6 +1357,31 @@ a, a:active, a:focus, a:hover, input {
 	position: relative;
 }
 
+.tj_editor_container .edit_form {
+	padding-bottom: 15px; width: 420px;
+	border-bottom: #cccccc solid 1px; position:relative; float: left; height: 34px; margin-bottom: 15px;
+}
+
+.tj_editor_container .edit_form .year {
+	position:relative; float: left; width: 180px;
+}
+
+.tj_editor_container .pending {
+	display: none;
+	border-bottom: #cccccc solid 1px;
+	position:relative;
+	float: left;
+	width: 420px;
+}
+
+.tj_editor_container .file_name {
+	width: 420px;
+	float: left;
+	position: relative;	
+	margin-bottom: 10px;
+	text-align: center;
+}
+
 #logout_btn{
 	position: fixed;
 	bottom: 0;

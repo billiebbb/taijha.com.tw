@@ -145,6 +145,8 @@ var TJEditor = function(){
 			
 			// add recent
 			else if(btn_self.is(".add_recent")){
+				blockwheel = true;
+				
 				var action = btn_self.attr("action");
 				var img = parent.find("img");
 				var file = img.attr("src");
@@ -386,12 +388,364 @@ var TJEditor = function(){
 					header: "刪除資料"
 				});
 			}
+			
+			// add work
+			else if(btn_self.is(".add_work")){
+				blockwheel = true;
+				
+				var action = btn_self.attr("action");
+				
+				var markup = '\
+				<div class="tj_editor_container">\
+					<div class="edit_form">\
+						<div style="width: 200px; position:relative; float: left; height: 34px;">\
+							<input type="text" placeholder="請輸入案名" class="name" style="width: 170px;" />\
+						</div>\
+						<div class="year">\
+							<div style="float: left; position: relative; height: 32px; line-height: 32px; margin-right: 10px;">設定年份</div>\
+							<div style="float: left; position: relative; width: 90px;" class="dropdown">\
+								<a class="dropdown-toggle btn" role="button" data-toggle="dropdown" href="#">\
+									<span class="value" style="margin-right: 5px;">2012</span><b class="caret"></b>\
+								</a>\
+								<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel" style="min-width: 144px; margin-top: -34px;">\
+								</ul>\
+							</div>\
+						</div>\
+					</div>\
+					<div class="pendding">\
+					</div>\
+					<div class="file_upload_btn btn btn-success" style="margin-bottom: 10px; position:relative; float: left;">\
+						<i class="icon-upload icon-white"></i> 上傳Logo\
+					</div>\
+					<div class="img_meta" style="margin: 0; position:relative; float: left;"> </div>\
+				</div>';
+				
+				var checkUpload;
+				
+				var content = $(markup);
+				var pendding = content.find(".pendding");
+				content.find(".img_meta").text("請上傳 240x160 pixel 解析度大於 72dpi 透明背景之  png 檔");
+				var year_val = content.find(".year .value");
+				var cur_year = parseInt(new Date().getFullYear());
+				year_val.text(cur_year);
+				
+				var years = "";
+				for(var i=0; i<8; i++){
+					years += '<li><a>' + (cur_year-i) + '</a></li>';
+				}
+				
+				content.find(".dropdown-menu").append(years);
+				content.find(".dropdown-menu li").click(function(){
+					year_val.text($(this).find("a").text());
+				});
+				
+				if($.browser.msie){
+					$.each(content.find("input"), function(){
+						$(this).watermark($(this).attr("placeholder"));	
+					});
+				}
+				
+				var qquploader = new qq.FileUploaderBasic({
+					button: content.find(".file_upload_btn")[0]
+					, action: action
+					, debug: true
+					, allowedExtensions: ["png"]
+					, sizeLimit: 2000 * 1024 // 2mb 
+					, params: {}
+					, onSubmit: function(id, fileName) {
+						var files = pendding.find(".file_name").length;
+						if(files < 1){
+							pendding.show().append("<div class='file_name'>Logo: " + fileName +"</div>");
+							content.find(".file_upload_btn").text("上傳標題");	
+							content.find(".img_meta").text("請上傳 200x360 pixel 解析度大於 72dpi 透明背景之  png 檔");
+							content.find(".file_upload_btn, .img_meta").hide();	
+						}else if(files == 1){
+							pendding.append("<div class='file_name'>標題: " + fileName +"</div>");
+							content.find(".file_upload_btn, .img_meta").hide();
+						}
+						
+						checkUpload();
+		 			}
+		 			, autoUpload: false
+			 		, onUpload: function(id, fileName) {
+			 			content.find("input").attr("disabled", "true");			
+			        	content.find(".file_upload_btn").hide();
+			        	
+			        	
+					}
+					, onProgress: function(id, fileName, loaded, total) {
+			 			if (loaded < total) {
+			 				var progress = "已上傳 " + Math.round(loaded / 1024) + ' kB(' + Math.round(loaded / total * 100) + '%)';
+			 				content.find(".img_meta").text(progress);							
+				        } else {
+							var progress = "已上傳 " + Math.round(total / 1024) + ' kB(100%)';
+			 				content.find(".img_meta").text(progress);
+				        }
+			      	}
+			      	, onComplete: function(id, fileName, responseJSON) {
+			      		
+			        	if (responseJSON.success) {
+			        		
+			          		WorksData.addWork(responseJSON.data);
+			          		
+							blockwheel = false;
+							
+							box.modal('hide');
+							
+			          		TJEditor.addWorkInfoByPid(responseJSON.data.p_id);	
+			          		          		
+			          		
+			        	} else {
+			        		
+		        		}
+		        		
+		      		}
+		      		, messages: {
+			            typeError: "{file} 檔案格式錯誤，需選擇以下類型的檔案: {extensions}.",
+			            sizeError: "{file} 檔案太大了，最多只能上傳2mb大小之檔案.",
+			            // minSizeError: "{file} is too small, minimum file size is {minSizeLimit}.",
+			            // emptyError: "{file} is empty, please select files again without it.",
+			            noFilesError: "沒有任何檔案可上傳",
+			            onLeave: "檔案正在上傳中，離開將中斷上傳動作"
+			        }
+		      		, showMessage: function(message){
+			            bootbox.alert(message);
+			        }
+		    	});
+		    	
+		    	
+		    	var box = bootbox.dialog( content, [
+					{
+						'label': '確定'
+						, 'class': 'btn-success'
+						, 'callback': function(){
+							qquploader.uploadStoredFiles();
+							return;
+						}
+					}
+					, {
+						'label': '取消'
+						, 'class': 'btn-link'
+						, 'callback': function(){
+							blockwheel = false;			
+						}
+					}
+					
+				], {
+					header: btn_self.text()
+				});
+				
+				content.find("input").keyup(function(){
+					checkUpload();
+				});
+				
+				checkUpload = function(){
+					
+					if(($.browser.msie)){
+						var val1 = content.find("input.name").watermarkVal();
+					}
+					else{
+						var val1 = content.find("input.name").val();
+					}
+								
+					if(qquploader._handler._files.length == 1 && val1){
+						qquploader.setParams({
+			 				name: val1
+			 				, year: year_val.text()
+			 			});
+			 			
+						box.find(".modal-footer .btn-success").show();		
+					}
+					else{
+						box.find(".modal-footer .btn-success").hide();
+					}
+				};
+		    	
+		    	box.find(".modal-footer .btn-success").hide();
+		    	box.width(450).css("marginLeft", "-225px");
+			}
 		});
 		
 	};
 	
+	var addWorkInfoByPid = function(pid){
+		
+		
+		var action = "cms/add_work_info.php";
+		
+		var markup = '\
+		<div class="tj_editor_container">\
+			<div class="file_upload_btn btn btn-success">\
+				<i class="icon-upload icon-white"></i> 上傳標題圖片\
+			</div>\
+			<div class="img_meta" style="margin: 0; position:relative; float: left;"> </div>\
+		</div>';
+
+		var content = $(markup);
+		content.find(".img_meta").text("請上傳 200x360 pixel 解析度大於 72dpi 透明背景之  png 檔");
+		
+		
+		var box = bootbox.dialog( content, [
+			
+		], {
+			header: "上傳標題圖片"
+		});
+		
+		var qquploader = new qq.FileUploaderBasic({
+			button: content.find(".file_upload_btn")[0]
+			, params: {pid: pid}
+			, action: action
+			, debug: true
+			, allowedExtensions: ["png"]
+			, sizeLimit: 2000 * 1024 // 1mb 
+			, onSubmit: function(id, fileName) {
+				content.find(".file_upload_btn").hide();
+ 			}
+	 		, onUpload: function(id, fileName) {
+	        	// box.modal('hide');
+			}
+			, onProgress: function(id, fileName, loaded, total) {
+	 			if (loaded < total) {
+	 				var progress = "已上傳 " + Math.round(loaded / 1024) + ' kB(' + Math.round(loaded / total * 100) + '%)';
+	 				content.find(".img_meta").text(progress);							
+		        } else {
+					var progress = "已上傳 " + Math.round(total / 1024) + ' kB(100%)';
+	 				content.find(".img_meta").text(progress);
+		        }
+	      	}
+	      	, onComplete: function(id, fileName, responseJSON) {
+	      		
+	        	if (responseJSON.success) {
+
+	          		WorksData.addWorksInfoById(responseJSON.data.image, responseJSON.data.p_id);
+	          		
+	          		box.modal('hide');
+	          		
+	          		TJEditor.addWorkImageByPid(responseJSON.data.p_id);	
+	          		
+	          		
+	        	} else {
+	        		
+        		}
+        		
+      		}
+      		, messages: {
+	            typeError: "{file} 檔案格式錯誤，需選擇以下類型的檔案: {extensions}.",
+	            sizeError: "{file} 檔案太大了，最多只能上傳2mb大小之檔案.",
+	            // minSizeError: "{file} is too small, minimum file size is {minSizeLimit}.",
+	            // emptyError: "{file} is empty, please select files again without it.",
+	            noFilesError: "沒有任何檔案可上傳",
+	            onLeave: "檔案正在上傳中，離開將中斷上傳動作"
+	        }
+      		, showMessage: function(message){
+	            bootbox.alert(message);
+	        }
+    	});
+	};
+	
+	var addWorkImageByPid = function(pid){
+		blockwheel = true;
+				
+		var action = "cms/add_work_image.php";
+		
+		var markup = '\
+		<div class="tj_editor_container">\
+			<div class="pendding">\
+			</div>\
+			<div class="file_upload_btn btn btn-success">\
+				<i class="icon-upload icon-white"></i> 上傳專案圖片\
+			</div>\
+			<div class="img_meta" style="margin: 0; position:relative; float: left;"> </div>\
+		</div>';
+		
+		
+		
+		var content = $(markup);
+		var pendding = content.find(".pendding");
+		content.find(".img_meta").text("請上傳解析度大於 72dpi 之 jpg 檔");
+		
+		var qquploader = new qq.FileUploaderBasic({
+			button: content.find(".file_upload_btn")[0]
+			, action: action
+			, debug: true
+			, allowedExtensions: ["jpg"]
+			, sizeLimit: 2000 * 1024 // 2mb 
+			, params: {pid: pid}
+			, onSubmit: function(id, fileName) {
+				var files = pendding.find(".file_name").length;
+				pendding.show().append("<div class='file_name'>" + fileName +"</div>");
+ 			}
+ 			, autoUpload: false
+	 		, onUpload: function(id, fileName) {
+	 			content.find("input").attr("disabled", "true");			
+	        	content.find(".file_upload_btn").hide();
+	        	
+	        	// box.modal('hide');				box.modal('hide');
+			}
+			, onProgress: function(id, fileName, loaded, total) {
+	 			if (loaded < total) {
+	 				var progress = "已上傳 " + Math.round(loaded / 1024) + ' kB(' + Math.round(loaded / total * 100) + '%)';
+	 				content.find(".img_meta").text(progress);							
+		        } else {
+					var progress = "已上傳 " + Math.round(total / 1024) + ' kB(100%)';
+	 				content.find(".img_meta").text(progress);
+		        }
+	      	}
+	      	, onComplete: function(id, fileName, responseJSON) {
+	      		
+	        	if (responseJSON.success) {
+	          		
+					blockwheel = false;       		
+	          		
+	          		WorksData.addImageByPid(responseJSON.data.image, responseJSON.data.p_id);
+	        	} else {
+	        		
+        		}
+        		
+      		}
+      		, messages: {
+	            typeError: "{file} 檔案格式錯誤，需選擇以下類型的檔案: {extensions}.",
+	            sizeError: "{file} 檔案太大了，最多只能上傳2mb大小之檔案.",
+	            // minSizeError: "{file} is too small, minimum file size is {minSizeLimit}.",
+	            // emptyError: "{file} is empty, please select files again without it.",
+	            noFilesError: "沒有任何檔案可上傳",
+	            onLeave: "檔案正在上傳中，離開將中斷上傳動作"
+	        }
+      		, showMessage: function(message){
+	            bootbox.alert(message);
+	        }
+    	});
+    	
+    
+    	
+    	var box = bootbox.dialog( content, [
+			{
+				'label': '確定'
+				, 'class': 'btn-success'
+				, 'callback': function(){
+					qquploader.uploadStoredFiles();
+					return;
+				}
+			}
+			, {
+				'label': '取消'
+				, 'class': 'btn-link'
+				, 'callback': function(){
+					blockwheel = false;			
+				}
+			}
+			
+		], {
+			header: "上傳作品圖片"
+		});
+		
+    	box.width(450).css("marginLeft", "-225px");
+	};
+	
 	return {
 		init: init
+		, addWorkInfoByPid: addWorkInfoByPid
+		, addWorkImageByPid: addWorkImageByPid
 	};
 }();
 

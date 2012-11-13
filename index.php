@@ -514,6 +514,15 @@
 					    left: -75px;
 				    '></div>
 				    
+				    <?php if($_SESSION["admin"]){ ?>
+				    	<div class='tj_btn edit add_work' action="cms/add_work.php" style="
+				    	left: 270px;					    
+					    top: -250px;
+					    width: 110px;">
+				    		<div class="icon-plus icon-white"></div>新增歷年作品
+			    		</div>
+				    <?php } ?>
+				    
 				    <div id="work_logo_container">
 				    	<div id="logo_list"></div>
 				    </div>

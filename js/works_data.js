@@ -220,9 +220,24 @@ var WorksData = function(){
 		return years;
 	};
 	
+	var addWork = function(data){
+		
+	};
+	
+	var addWorksInfoById = function(image, pid){
+		
+	};
+	
+	var addImageByPid = function(image, pid){
+		
+	};
+	
 	return {
 		works: works
 		, getRecent: getRecent
+		, addWork: addWork
+		, addWorksInfoById: addWorksInfoById
+		, addImageByPid: addImageByPid
 		, getMeta: {}
 		, getYears: getYears
 		, getYearsList: getYearsList
