@@ -9,7 +9,7 @@ var Work = function(){
 	
 	var markup_work_body = '\
 		<div>\
-			<div class="logo" style="background-image: url(${logo});"></div>\
+			<div class="logo"><img src="${logo}" /></div>\
 			<div class="subtitle">\
 				<img src="${subtitle}" />\
 			</div>\
@@ -70,9 +70,14 @@ var Work = function(){
 				$(this).remove();
 			}); 
 			
+			
+			if(is_admin) slider_img.find(".tj_btn.edit.remove").attr("m_id", data["img_id"][idx]);
+			
 			var img = $('<img src="' + data.images[idx] + '" />');
 			slider_img.append(img);
-			img.resizeToParent({fadeIn: 500, type: 'fixed', align: 'lt'});
+			
+			img.resizeToParent({fadeIn: 500, type: 'fixed', align: 'lt'});
+			
 			setMediaArrow(media, idx);
 		});
 		
@@ -166,13 +171,29 @@ var Work = function(){
 		$proj.data("init", true);
 		
 		var idx = $(".work_item").index($proj);
-		var tmpl = $.tmpl( "workItemBody", WorksData.works[idx]);
+		var worksData = WorksData.getWorks()[idx];
+		
+		var tmpl = $.tmpl( "workItemBody", worksData);
 		
 		$proj.append(tmpl);
 		
 		$proj.find(".thumb:first").addClass("active");
 		$proj.find(".thumb img").resizeToParent();
 		$proj.find(".slider_img img").resizeToParent({type: "fixed", align: "lt"});
+		
+		if(is_admin){
+			var rm_btn = $('<div m_id="' + worksData["img_id"][0] + '" class="tj_btn edit remove" action="cms/remove_media.php" style="left: 0; z-index: 300;"><div class="icon-remove icon-white"></div></div>');
+			rm_btn.css("right", "");
+			
+			var edit_btn = $('<div action="cms/edit_media.php?m_id=' + worksData["logo_id"] + '" class="tj_btn edit image"><div class="icon-picture icon-white"></div>編輯Logo</div>');
+			$proj.find(".logo").append(edit_btn);
+			
+			edit_btn = $('<div action="cms/edit_media.php?m_id=' + worksData["subtitle_id"] + '" class="tj_btn edit image"><div class="icon-picture icon-white"></div>編輯標題</div>');
+			$proj.find(".subtitle").append(edit_btn);
+			
+			
+			$proj.find(".slider_img").append(rm_btn);
+		}
 		
 	};
 	
@@ -197,30 +218,59 @@ var Work = function(){
 		
 		$.template( "workItem", markup );
 		$.template( "logoItem", markup2 );
-		$.template( "workItemBody", markup_work_body);
-		
-		var yl = WorksData.getYearsList();
-		var data = WorksData.getYears();
-		var mydata = '';
-		var year_con, work_con = $("#work_content");
-		var logo_list = $("#logo_list");
-		
-		$.each(yl, function(i, val){
-			yd = data[val];
-			
-			$.tmpl( "logoItem", yd).appendTo(logo_list);
-			$.tmpl( "workItem", yd).appendTo(work_con);
-		});		
+		$.template( "workItemBody", markup_work_body);
 		
 		var work_item;
 		$.each($('.work_item'), function(i){
 			work_item = $(this);
 			
 			if(!work_item.data('data')){
-				work_item.data('data', WorksData.works[i]);
+				work_item.data('data', WorksData.getWorks()[i]);
 			}
 		});
 		
+	};
+	
+	var addWork = function(data){
+		var wcon = $("#work_content");
+		var wlist = $("#logo_list");
+		$.tmpl( "logoItem", data).prependTo(wlist);
+		
+		
+		var same_year = $("#work_content .work_item[year='" + data.year + "']:first");
+		
+		
+		
+		var wi = $('<section id="project-' + data.id + '" year="' + data.year + '" class="work work_item"></section>');
+		
+		
+		
+		if(same_year.length){
+			same_year.before(wi);	
+		}
+		else{
+			wi.prependTo(wcon);
+		}
+		
+		var rm_btn = '<div action="cms/remove_post.php" p_id="' + data.id + '"\
+		 style="position: absolute; top: -280px; left: -100px; width: 90px;" class="tj_btn edit remove">\
+    		<div class="icon-remove icon-white"></div>\
+    		移除此作品\
+		</div>';
+		wi.append(rm_btn);
+		
+		var add_btn = "<div class='tj_btn edit add_image'\
+		 style='position: absolute;\
+		    top: -280px;\
+		    left: 25px;\
+		    width: 80px;'\
+		 p_id='" + data.id + "' \
+		 action='cms/add_work_image.php'>\
+    		<div class='icon-plus icon-white'></div>\
+    		新增圖片\
+		</div>";
+		
+		wi.append(add_btn);
 	};
 	
 	var workResize = function(){
@@ -266,6 +316,7 @@ var Work = function(){
 		
 	return {
 		init: init
+		, addWork: addWork
 		, resize: workResize
 		, createWork: createWork
 		, buildProject: buildProject

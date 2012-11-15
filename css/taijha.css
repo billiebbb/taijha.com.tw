@@ -776,10 +776,10 @@ a, a:active, a:focus, a:hover, input {
 	background-position: center center;
     background-repeat: no-repeat;
     height: 160px;
-    left: -370px;
+    left: -330px;
     position: absolute;
-    top: -260px;
-    width: 240px;
+    top: -250px;
+    width: 180px;
 }
 
 .work_item .subtitle {
@@ -927,12 +927,12 @@ a, a:active, a:focus, a:hover, input {
 	width: auto;
 }
 
-.tj_btn.red, .tj_btn.edit{
+.tj_btn.red, .tj_btn.edit.remove {
 	background-color: #ff3333;
 }
 
-.tj_btn.edit.remove {
-	right: 0;
+.tj_btn.edit, .tj_btn[class*=add] {
+	background-color: #336633;
 }
 
 .tj_btn [class*=icon-] {
@@ -954,8 +954,12 @@ a, a:active, a:focus, a:hover, input {
 	background-color: #000;
 }
 
-.tj_btn.red:hover, .tj_btn.edit:hover {
+.tj_btn.red:hover, .tj_btn.edit.remove:hover {
 	background-color: #cc0000;
+}
+
+.tj_btn.edit:hover, .tj_btn[class*=add]:hover {
+	background-color: #339933;
 }
 
 .tj_btn.active, .tj_btn.active:hover {

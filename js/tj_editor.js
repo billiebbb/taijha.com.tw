@@ -347,16 +347,22 @@ var TJEditor = function(){
 			
 			// remove post
 			else if(btn_self.is(".remove")){
-				var data = {p_id: $(this).attr("p_id")};
+				if(parent.is(".slider_img")){
+					var data = {m_id: $(this).attr("m_id")};
+				}
+				else{
+					var data = {p_id: $(this).attr("p_id")};	
+				}
+				
 				
 				bootbox.dialog("確定刪除此筆資料嗎?", [
 					{
 						'label': '確定'
 						, 'class': 'btn-success'
 						, 'callback': function(){
-							
+							blockwheel = false;
 							$.ajax({
-								url: "cms/remove_post.php"
+								url: action
 								, data: data
 								, type: "POST"
 								, success: function(result){
@@ -366,12 +372,24 @@ var TJEditor = function(){
 								}	
 							});
 							
-							parent.remove();
+							if(parent.is(".work_item")){
+								goToSection("work");
+								WorksData.removeWorkById(data.p_id);
+								scrollLock = false;
+							}
+							else if(parent.is(".slider_img")){
+								parent.parents(".media").find(".thumb.active").remove();
+								
+								parent.parents(".media").find(".thumb:not(.active):first").click();
+							}else{
+								parent.remove();
+							}
+							
 							
 							if($("#recent").is(".active")){
 								Recent.setDisplay();
 							}
-												
+							
 							blockwheel = false;
 							return;	
 						}
@@ -487,6 +505,8 @@ var TJEditor = function(){
 			        	if (responseJSON.success) {
 			        		
 			          		WorksData.addWork(responseJSON.data);
+			          		Work.addWork(responseJSON.data);
+			          		
 			          		
 							blockwheel = false;
 							
@@ -519,6 +539,7 @@ var TJEditor = function(){
 						'label': '確定'
 						, 'class': 'btn-success'
 						, 'callback': function(){
+							blockwheel = false;
 							qquploader.uploadStoredFiles();
 							return;
 						}
@@ -563,6 +584,10 @@ var TJEditor = function(){
 		    	
 		    	box.find(".modal-footer .btn-success").hide();
 		    	box.width(450).css("marginLeft", "-225px");
+			}
+			
+			else if(btn_self.is(".add_image")){
+				addWorkImageByPid(btn_self.attr("p_id"));
 			}
 		});
 		
@@ -614,13 +639,12 @@ var TJEditor = function(){
 		        }
 	      	}
 	      	, onComplete: function(id, fileName, responseJSON) {
-	      		
+	      		blockwheel = false;
 	        	if (responseJSON.success) {
-
-	          		WorksData.addWorksInfoById(responseJSON.data.image, responseJSON.data.p_id);
+	        		
+	        		box.modal('hide');
 	          		
-	          		box.modal('hide');
-	          		
+	          		WorksData.addWorksInfo(responseJSON.data);
 	          		TJEditor.addWorkImageByPid(responseJSON.data.p_id);	
 	          		
 	          		
@@ -662,7 +686,7 @@ var TJEditor = function(){
 		
 		var content = $(markup);
 		var pendding = content.find(".pendding");
-		content.find(".img_meta").text("請上傳解析度大於 72dpi 之 jpg 檔");
+		content.find(".img_meta").text("請上傳解析度大於 72dpi 之 jpg 檔,可多選檔案");
 		
 		var qquploader = new qq.FileUploaderBasic({
 			button: content.find(".file_upload_btn")[0]
@@ -692,12 +716,16 @@ var TJEditor = function(){
 		        }
 	      	}
 	      	, onComplete: function(id, fileName, responseJSON) {
-	      		
+	      		blockwheel = false;
 	        	if (responseJSON.success) {
+	          		WorksData.addImage(responseJSON.data);
 	          		
-					blockwheel = false;       		
+	          		if($("#project-" + responseJSON.data.p_id).is(".active")){
+	          			var thumb = $('<div class="thumb"><img src="uploads/thumb_' + responseJSON.data.image + '"><div class="border"></div></div>');
+	          			$("#project-" + responseJSON.data.p_id).find(".slider_thumb").append(thumb);
+	          			thumb.find("img").resizeToParent();
+	          		}
 	          		
-	          		WorksData.addImageByPid(responseJSON.data.image, responseJSON.data.p_id);
 	        	} else {
 	        		
         		}
@@ -723,6 +751,7 @@ var TJEditor = function(){
 				'label': '確定'
 				, 'class': 'btn-success'
 				, 'callback': function(){
+					blockwheel = false;
 					qquploader.uploadStoredFiles();
 					return;
 				}

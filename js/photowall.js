@@ -49,7 +49,7 @@ var PhotoWall = function(){
 		$("#modal_bg").live('click', function(){
 			$('.photo_item:has(.pitem_container):first').mouseleave();
 		});
-		works = WorksData.works;
+		works = WorksData.getWorks();
 		$.template( "wallPhoto", markup );
 		
 		$(window).resize(pwResize);

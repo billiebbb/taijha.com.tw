@@ -119,42 +119,6 @@
 		<?php } ?>
 		
 		<!-- recent data -->
-		<script type="text/javascript">
-			<?php
-				$query = "SELECT title AS name, p_id AS id, content AS year FROM tj_post WHERE category='work_project' ORDER BY update_at DESC";
-				$result = $mysqli->query($query);
-				
-				$json = array();
-				
-				while ($row = $result->fetch_assoc()) {
-			    	$arr = array("id"=>$row["id"], "name"=>$row["name"], "year"=>$row["year"]);
-			    	
-			    	
-					$query = "SELECT * FROM tj_media WHERE p_id=".$row['id'];
-					// $firephp->log($query);					
-					$mresult = $mysqli->query($query);
-					
-					$images = array();
-					while ($mrow = $mresult->fetch_assoc()) {
-						if($mrow["m_type"] == "logo"){
-							$arr["logo"] = 'uploads/'.$mrow["url"];
-						}
-						else if($mrow["m_type"] == "info"){
-							$arr["subtitle"] = 'uploads/'.$mrow["url"];
-						}
-						else if($mrow["m_type"] == "image"){
-							array_push($images, 'uploads/'.$mrow["url"]);
-						}
-					}
-					
-					$arr["images"] = $images;
-					array_push($json, $arr);
-			    }
-			?>
-			
-			WorksData.setWorksData(<?php echo json_encode($json); ?>);
-		</script>
-		
 		
 		<script type="text/javascript">
 		
@@ -172,11 +136,15 @@
 		
 		</script>
 		
-		<?php if($_SESSION["admin"]){ ?>
 		<script type="text/javascript">
-			var is_admin = true;	
-		</script>
+		<?php if($_SESSION["admin"]){ ?>
+		
+			var is_admin = true;
+		
+		<?php } else{?>
+			var is_admin = false;
 		<?php } ?>
+		</script>
 		
 		
 	</head>
@@ -450,14 +418,12 @@
 										    	<div class='tj_btn edit image' action="cms/edit_media.php?m_id=<?php echo $row["m_id"]; ?>">
 										    		<div class="icon-picture icon-white"></div>編輯圖片
 									    		</div>
-									    		<div class='tj_btn edit remove' p_id='<?php echo $row["p_id"]; ?>'>
+									    		<div class='tj_btn edit remove' style="right: 0;" p_id='<?php echo $row["p_id"]; ?>' action="cms/remove_post.php">
 										    		<div class='icon-remove icon-white'></div>
 									    		</div>
 										    <?php } ?>
 										</div>
 										
-									
-									
 									<?php
 							    }
 							?>
@@ -472,6 +438,50 @@
 				<!--end of recent -->
 				
 				<!-- start of works -->
+				<script type="text/javascript">
+					<?php
+						$query = "SELECT title AS name, p_id AS id, content AS year FROM tj_post WHERE category='work_project' ORDER BY content DESC, update_at DESC";
+						$result = $mysqli->query($query);
+						
+						$json = array();
+						
+						while ($row = $result->fetch_assoc()) {
+					    	$arr = array("id"=>$row["id"], "name"=>$row["name"], "year"=>$row["year"]);
+					    	
+					    	
+							$query = "SELECT * FROM tj_media WHERE p_id=".$row['id'];
+							// $firephp->log($query);
+							
+							$mresult = $mysqli->query($query);
+							
+							$images = array();
+							$thumbs = array();
+							$img_id = array();
+							while ($mrow = $mresult->fetch_assoc()) {
+								if($mrow["m_type"] == "logo"){
+									$arr["logo"] = 'uploads/'.$mrow["url"];
+									$arr["logo_id"] = $mrow["m_id"];
+								}
+								else if($mrow["m_type"] == "info"){
+									$arr["subtitle"] = 'uploads/'.$mrow["url"];
+									$arr["subtitle_id"] = $mrow["m_id"];
+								}
+								else if($mrow["m_type"] == "image"){
+									array_push($images, 'uploads/'.$mrow["url"]);
+									array_push($thumbs, 'uploads/thumb_'.$mrow["url"]);
+									array_push($img_id, $mrow["m_id"]);
+								}
+							}
+							
+							$arr["images"] = $images;
+							$arr["thumbs"] = $thumbs;
+							$arr["img_id"] = $img_id;
+							array_push($json, $arr);
+					    }
+					?>
+					
+					WorksData.setWorksData(<?php echo json_encode($json); ?>);
+				</script>
 				<section id="work">
 						
 					<div class="content_title" style="
@@ -516,7 +526,7 @@
 				    
 				    <?php if($_SESSION["admin"]){ ?>
 				    	<div class='tj_btn edit add_work' action="cms/add_work.php" style="
-				    	left: 270px;					    
+				    	left: 250px;					    
 					    top: -250px;
 					    width: 110px;">
 				    		<div class="icon-plus icon-white"></div>新增歷年作品
@@ -524,7 +534,17 @@
 				    <?php } ?>
 				    
 				    <div id="work_logo_container">
-				    	<div id="logo_list"></div>
+				    	<div id="logo_list">
+				    		<?php
+				    			foreach ($json as $key => $value) {
+				    		?>
+				    		<div class="work_logo"  rel="tooltip" title="<?php echo $value["year"]; ?>" pid="project-<?php echo $value["id"]; ?>">
+								<img src="<?php echo $value["logo"]; ?>" />
+							</div>
+							<?php
+								}
+				    		?>
+				    	</div>
 				    </div>
 				    
 				    <div id="logo_pager">
@@ -535,7 +555,39 @@
 				</section>
 					
 				<div id="work_content">
-					
+					<?php
+		    			foreach ($json as $key => $value) {
+		    		?>
+		    		<section id="project-<?php echo $value["id"]; ?>" year="<?php echo $value["year"]; ?>" class="work work_item" pid="<?php echo $value["id"]; ?>">
+		    			<?php if($_SESSION["admin"]){ ?>
+				    		<div class='tj_btn edit remove'
+				    		 style='position: absolute;
+							    top: -280px;
+							    left: -100px;
+							    width: 90px;'
+				    		 p_id='<?php echo $value["id"]; ?>' 
+				    		 action='cms/remove_post.php'
+				    		 >
+					    		<div class='icon-remove icon-white'></div>
+					    		移除此作品
+				    		</div>
+				    		
+				    		<div class='tj_btn edit add_image'
+				    		 style='position: absolute;
+							    top: -280px;
+							    left: 25px;
+							    width: 80px;'
+				    		 p_id='<?php echo $value["id"]; ?>' 
+				    		 action='cms/add_work_image.php'
+				    		 >
+					    		<div class='icon-plus icon-white'></div>
+					    		新增圖片
+				    		</div>
+					    <?php } ?>
+		    		</section>
+					<?php
+						}
+		    		?>
 				</div>
 				
 				<!-- end of works -->

@@ -3,13 +3,14 @@ var pre_section;
 var blockwheel = false;
 
 var goToSection = function(sname){
+	// console.log("scrollLock " + scrollLock)	
 	if(scrollLock) return;
 	
 	$.address.value(sname);
 };
 
 var swapSection = function(direction){
-	
+
 	if(scrollLock) return;
 	
 	var section = $("section");
@@ -195,7 +196,8 @@ $(function(){
 	$("#menu .item:first").addClass('active');
 	
 	$(document).mousewheel(function(event, delta, deltaX, deltaY){
-		if(blockwheel) return;
+		
+		if(blockwheel) return;
 		swapSection(delta);
 	});
 	

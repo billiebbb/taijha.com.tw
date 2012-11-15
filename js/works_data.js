@@ -204,6 +204,10 @@ var WorksData = function(){
 		return arr_years;
 	};
 	
+	var getWorks = function(){
+		return works;
+	};
+	
 	var getYears = function(){
 		if(years) return years;
 		
@@ -221,24 +225,94 @@ var WorksData = function(){
 	};
 	
 	var addWork = function(data){
+		for(var i=0; i<works.length; i++){
+			if(works[i].year == data.year){
+				works.splice(i, 0, data);
+				break;		
+			}
+		}
+		
+		works.unshift(data);
+	};
+	
+	var addWorksInfo = function(data){
+		var work;
+		
+		for(var i=0; i<works.length; i++){
+			work = works[i];
+			console.dir(work);
+			if(parseInt(work.id) == parseInt(data.p_id)){
+				work.subtitle = "uploads/" + data.image;
+				work.subtitle_id = data.subtitle_id
+				
+				console.dir(works);
+				break;		
+			}
+		}		
 		
 	};
 	
-	var addWorksInfoById = function(image, pid){
-		
+	var addImage = function(data){
+		var work;
+		for(var i=0; i<works.length; i++){
+			work = works[i];
+			if(work.id == data.p_id){
+				if(!work.images){
+					work.images = [];
+					work.img_id = [];
+					work.thumbs = [];
+				}
+				
+				work.images.push("uploads/" + data.image);
+				work.thumbs.push("uploads/thumb_" + data.image);
+				work.img_id.push(data.m_id);
+				
+				console.dir(work);
+				break;		
+			}
+		}
 	};
 	
-	var addImageByPid = function(image, pid){
-		
+	var removeWorkById = function(pid){
+		var data, year;
+		for(var i=0; i < works.length; i++){
+			data = works[i];
+			year = data.year;
+			if(data.id == pid){
+				works.splice(i, 1);
+				years = null;
+				
+				
+				if($(".work_item[year='" + year + "']").length == 1){
+					$(".submenu .item.sub[key='" + year + "']").remove();
+				}
+				
+				$(".work_logo[pid='project-" + pid + "'], .work_item[id='project-" + pid + "']").remove();
+				
+				break;
+			}
+		}
+	};
+	
+	var getDataById = function(id){
+		var data;
+		for(var i=0; i < works.length; i++){
+			data = works[i];
+			if(data.id == id){
+				return data;
+			}
+		}
 	};
 	
 	return {
-		works: works
+		getWorks: getWorks
+		, getDataById: getDataById
 		, getRecent: getRecent
 		, addWork: addWork
-		, addWorksInfoById: addWorksInfoById
-		, addImageByPid: addImageByPid
+		, addWorksInfo: addWorksInfo
+		, addImage: addImage
 		, getMeta: {}
+		, removeWorkById: removeWorkById
 		, getYears: getYears
 		, getYearsList: getYearsList
 		, setWorksData: setWorksData

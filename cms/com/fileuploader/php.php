@@ -47,7 +47,7 @@ class qqUploadedFileXhr {
         
         return true;
     }
-
+	
     /**
      * Get the original filename
      * @return string filename

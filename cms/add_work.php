@@ -39,7 +39,8 @@
 		$mysqli->query($query);
 		
 		if($mysqli->affected_rows == 1){
-			$work = array("name"=>$name, "m_id"=> $mysqli->insert_id, "image"=> $new_file, "p_id"=>$p_id);
+			$work = array("name"=>$name, "logo_id"=> $mysqli->insert_id, "m_id"=> $mysqli->insert_id, "image"=> $new_file, "p_id"=>$p_id, "year"=>$year
+							, "logo"=> "uploads/".$new_file, "id"=>$p_id);
 			$json = array("success" => TRUE, "msg" => "新增成功", "data" => $work);
 			echo json_encode($json);
 		}
