@@ -3,7 +3,13 @@
 	require_once("./com/FirePHPCore/FirePHP.class.php");
 	$firephp = FirePHP::getInstance(true);
 	
+	
 	session_start();
+	
+	if($_SESSION["admin"]){
+		$lifeTime = 1 * 3600;			
+		session_set_cookie_params($lifeTime);
+	}
 
 ?>
 <!DOCTYPE html>
@@ -592,6 +598,32 @@
 				
 				<!-- end of works -->
 				<!-- start of story -->
+				
+				<script type="text/javascript">
+					<?php
+						$query = "SELECT A.title, A.name, A.project, A.c_id, A.content, B.sort ";
+						$query .= "FROM tj_comment AS A, tj_post AS B WHERE A.project = B.title AND B.category='story_project' ORDER BY sort DESC, c_id DESC";
+						$result = $mysqli->query($query);
+						
+						
+						$projects = array();
+						$json = array();
+						
+						while ($row = $result->fetch_assoc()) {
+					    	if(!$projects[$row["project"]]){
+					    		$projects[$row["project"]] = $row["sort"];
+								
+					    	}
+							array_push($json, $row);
+					    }
+						
+						// $firephp->log($projects);
+					?>
+					
+					StoryData.setProject(<?php echo json_encode($projects); ?>);
+					StoryData.setStory(<?php echo json_encode($json); ?>);
+				</script>
+				
 				<section id="story">
 					<div class="title_img v_line" style='
 				    left: -390px;
@@ -600,7 +632,7 @@
 				    <div class="title_img" style="
 						left: -360px;
 					    position: absolute;
-					    top: -240px;
+					    top: -260px;
 					    ">
 					    
 				    	<?php
@@ -613,6 +645,12 @@
 				    		<div class='tj_btn edit image' action="cms/edit_media.php?m_id=<?php echo $obj->m_id; ?>"><div class="icon-picture icon-white"></div>編輯標題圖片</div>
 			    		<?php } ?>	
 				    </div>
+				    
+					<?php if($_SESSION["admin"]){ ?>
+						<div style="left: 260px; top: -200px; width: 110px;" action="cms/add_story.php" class="tj_btn edit add_story">
+				    		<div class="icon-plus icon-white"></div>新增成家故事
+			    		</div>
+					<?php } ?>
 					
 				    <div class="title_img" style="
 					left: -360px;
@@ -634,7 +672,7 @@
 					<div class="content_title" style="
 					left: -360px;
 				    position: absolute;
-				    top: -120px;
+				    top: -150px;
 				    width: 340px;
 					">
 						
@@ -659,7 +697,7 @@
 					    position: absolute;
 					    height: 36px;
 					    line-height: 36px;
-					    top: -200px;">
+					    top: -240px;">
 							<div class="icon-arrow-left icon-white"></div> 
 							<div style="float: left;">返回成家故事</div>
 						</div>
@@ -690,7 +728,24 @@
 				    top: -150px;
 				    width: 400px;
 				    ">
-				    	<div class="pagination pagination-right" style="position: relative; margin-top: 0;">
+				    	
+						<div style="position: absolute; z-index: 50;" class="dropdown story_filter">
+							<a class="dropdown-toggle btn btn-large" role="button" data-toggle="dropdown" href="#">
+								<span class="value" style="margin-right: 5px;">全部建案</span><b class="caret"></b>
+							</a>
+							<ul class="dropdown-menu" role="menu">
+								<li><a>全部建案</a></li>
+								<?php
+									foreach($projects as $key=>$value){ 
+								?>
+									<li><a><?php echo $key; ?></a></li>
+								<?php
+									}
+								?>
+							</ul>
+						</div>
+						
+				    	<div class="pagination pagination-right" style="position: relative; margin-top: 0; z-index: 40;">
 				            <ul id="story_pager">
 				                <li class="prev"><a>«</a></li>
 				                
@@ -709,6 +764,7 @@
 				            <tbody id="story_list"></tbody>
 						</table>
 					</div>
+					
 				</section>
 				<!-- end of story -->
 				

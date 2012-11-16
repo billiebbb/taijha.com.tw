@@ -1,44 +1,39 @@
 var Story = function(){
 	var story_data;
+	var project_data;
 	var cur_page = 1;
 	var cur_story = 0;
 	var page_size = 7;
 	var total_page;
-	var pager_amount = 6;
+	var pager_amount = 3;
 	var view_type = "default";
+	var story_filter;
 	
 	var markup = '\
-		<tr>\
+		<tr proj="${project}">\
         	<td>${title}</td>\
         	<td>${project}</td>\
         	<td>${name}</td>\
        	</tr>';
        	
 	var init = function(){
-		story_data = StoryData.stories;
-		total_page = Math.ceil(story_data.length / page_size);
 		
-		$.template( "storyListItem", markup );
-		
-		var list_body = $("#story_list");
-		$.tmpl( "storyListItem", story_data).appendTo( list_body );
-		
-		// list_body.find("tr:first").addClass('active');		
-		var pager = $("#story_pager");
-		var prev_btn = pager.find(".prev");
-		
-		var pages = "";
-		var idx;
-		
-		for(var i=1; i<=total_page; i++){
-			pages += "<li class='page' idx='" + i + "'><a>" + i +"</a></li>";
+		if(is_admin){
+			markup = '\
+			<tr proj="${project}">\
+	        	<td>${title}</td>\
+	        	<td>${project}</td>\
+	        	<td>${name}</td>\
+	        	<td><div c_id="${c_id}" class="icon-remove remove_btn icon-red remove" action="cms/remove_comment.php"></div></td>\
+	       	</tr>';
 		}
 		
+		// list_body.find("tr:first").addClass('active');		
 		
-		prev_btn.after(pages);
-		
-		$("li.page:first").addClass('active');
-		
+		$(".story_filter li").live('click', function(){
+			$(".story_filter .value").text($(this).text());
+			setStoryList($(this).text());
+		});
 		
 		$("#story_list tr").live('click', function(){
 			if($(this).is('.active')) return;
@@ -84,7 +79,60 @@ var Story = function(){
 		
 		// setContent();
 		
-		$("#stories").css("left", $(window).width()*2);
+		$("#stories").css("left", $(window).width()*2);		
+		setStoryList();
+	};
+	
+	var setStoryList = function(filter, cpage){
+		if(!filter || filter == "全部建案"){
+			story_data = StoryData.getStory();
+			total_page = Math.ceil(story_data.length / page_size);
+				
+		}
+		else{
+			data = StoryData.getStory();
+			story_data = [];
+			
+			for(var key in data){
+				if(data[key]["project"] == filter){
+					story_data.push(data[key]);
+				}
+			}
+			
+			total_page = Math.ceil(story_data.length / page_size);
+			
+			console.log("total_page: %s", total_page);
+		}
+		
+		
+		$.template( "storyListItem", markup );
+			
+		var list_body = $("#story_list").empty();
+		$.tmpl( "storyListItem", story_data).appendTo( list_body );
+		
+		var pages = "";
+		var idx;
+		var pager = $("#story_pager");
+		var prev_btn = pager.find(".prev");
+		
+		pager.find(".page").remove();
+		for(var i=1; i<=total_page; i++){
+			pages += "<li class='page' idx='" + i + "'><a>" + i +"</a></li>";
+		}
+		
+		if(view_type == "read"){
+			$("#story_table tr").each(function(i){
+				$(this).find("th:gt(0), td:gt(0)").hide();
+				$(this).find("td:eq(3)").show();
+			});
+		}
+		
+		prev_btn.after(pages);
+		
+		$("#story_pager .page:first").addClass("active");
+		
+		cur_page = cpage || 1;
+		
 		setPager();
 		setList();
 	};
@@ -94,6 +142,7 @@ var Story = function(){
 		if(view_type == "default"){
 			view_type = "read";
 			pager_amount = 3;
+			
 			$("#story").find(".title_img, .content_title").each(function(i){
 				if(!$(this).data("oleft")) $(this).data("oleft", parseCssNumber($(this).css("left")));
 				
@@ -113,14 +162,19 @@ var Story = function(){
 				$("#story .pagination-right").removeClass('pagination-right')
 			});
 			
+			$("#story .story_filter").stop(true).animate({
+				top: -45
+			}, 800);
+			
 			$("#story_table th:first").width("100%");
 			
 			$("#story_table tr").each(function(i){
 				$(this).find("th:gt(0), td:gt(0)").hide();
+				$(this).find("td:eq(3)").show();
 			});
 			
 		}else{
-			pager_amount = 6;
+			pager_amount = 3;
 			
 			view_type = "default";
 			
@@ -137,6 +191,10 @@ var Story = function(){
 				$("#story_table th:first").width("45%");
 				$("#story_table tr").find("th:hidden, td:hidden").fadeIn(300);
 			});
+			
+			$("#story .story_filter").stop(true).animate({
+				top: 0
+			}, 800);
 			
 			$("#story").find(".title_img, .content_title").each(function(i){
 				$(this).stop(true).delay(i * 200).animate({
@@ -177,8 +235,7 @@ var Story = function(){
 			ep = pager_amount;
 			
 			pager.find(".page:lt(" + ep + ")").show();
-						
-			
+
 		}
 		else if(cur_page > total_page - cnum){
 			
@@ -188,12 +245,15 @@ var Story = function(){
 			ep = total_page;
 			
 			if(sp == 0){
+				// console.log('#0')
 				pager.find(".page:lt(" + (sp + pager_amount) + ")").show();
 			}else{
-				pager.find(".page:gt(" + sp + ")").show();	
+				pager.find(".page:gt(" + (sp-1) + ")").show();
+				// console.log('#1 sp: %s', sp)	
 			}
 			
 			
+			// console.log('#2')
 		}
 		else{
 			
@@ -201,6 +261,7 @@ var Story = function(){
 			ep = cur_page + cnum;
 			
 			pager.find(".page:gt(" + (sp-1) + "):lt(" + pager_amount + ")").show();
+
 		}
 		
 		if(cur_page == 1){
@@ -249,6 +310,7 @@ var Story = function(){
 	return {
 		init: init
 		, setContent: setContent
+		, setStoryList: setStoryList
 	}
 }();
 

@@ -1,7 +1,7 @@
 var TJEditor = function(){
 	var init = function(){
 		// $("#home_title").append("<div class='tj_btn edit text' key='home'>編輯</div>");
-		$(".tj_btn.edit").live('click', function(event) {
+		$(".tj_btn.edit, .remove_btn").live('click', function(event) {
 			
 			var btn_self = $(this);
 			var parent = btn_self.parent();
@@ -147,7 +147,7 @@ var TJEditor = function(){
 			else if(btn_self.is(".add_recent")){
 				blockwheel = true;
 				
-				var action = btn_self.attr("action");
+				
 				var img = parent.find("img");
 				var file = img.attr("src");
 
@@ -265,7 +265,7 @@ var TJEditor = function(){
 			 				, url: val2
 			 			});
 			 			
-						box.find(".modal-footer .btn-success").show();		
+						box.find(".modal-footer .btn-success").show();
 					}
 					else{
 						box.find(".modal-footer .btn-success").hide();
@@ -274,6 +274,92 @@ var TJEditor = function(){
 		    	
 		    	box.find(".modal-footer .btn-success").hide();
 		    	box.width(400).css("marginLeft", "-200px");
+			}
+			
+			// add story
+			else if(btn_self.is(".add_story")){
+								
+		    	blockwheel = true;
+								
+				var markup = '\
+				<div class="tj_editor_container" >\
+					<input type="text" placeholder="請輸入故事標題" class="title" style="width: 160px; margin-right: 5px;" />\
+					<input type="text" placeholder="請輸入住戶名稱" class="name" style="width: 160px; margin-right: 5px;" />\
+					<input type="text" placeholder="請輸入建案名稱" class="project" style="width: 150px;" />\
+					<div class="tj_editor_container">\
+						<div class="text_editor"></div>\
+					</div>\
+				</div>';
+				
+				var content = $(markup);
+				
+				content.find(".text_editor").redactor({
+					lang: "zh_tw"
+					, buttons: ['html', '|', 'formatting', '|', 'bold', 'italic', 'deleted', '|'
+						, 'link', '|',
+						'fontcolor', 'backcolor', '|', 'alignment', '|', 'horizontalrule']
+				});
+				
+				if($.browser.msie){
+					$.each(content.find("input"), function(){
+						$(this).watermark($(this).attr("placeholder"));	
+					});
+				}
+				
+				bootbox.dialog(content, [
+					{
+						'label': '確定'
+						, 'class': 'btn-success'
+						, 'callback': function(){
+							blockwheel = false;
+							
+							var data = {
+								title: ($.browser.msie)? content.find(".title").watermarkVal() : content.find(".title").val()
+								, name: ($.browser.msie)? content.find(".name").watermarkVal() : content.find(".name").val()
+								, project: ($.browser.msie)? content.find(".project").watermarkVal() : content.find(".project").val()
+								, content: content.find(".text_editor").getCode()
+							};
+							
+							// console.log(content.find(".text_editor").html());
+							$.ajax({
+								url: action
+								, data: data
+								, type: "POST"
+								, success: function(result){
+									if(result.error){
+										bootbox.alert(result.msg);
+									}
+								}
+							});
+							
+							parent.html(data.content);
+							parent.append(btn_self);
+						}
+					}
+					,{
+						'label': '取消'
+						, 'class': 'btn-link'
+						, 'callback': function(){
+							blockwheel = false;			
+						}
+					}
+					
+				], {
+					header: btn_self.text()
+				});
+				
+				var data = [];
+				var projects = StoryData.getProject();
+				for(var key in projects){
+					data.push(key);	
+				}
+				
+				content.find(".project").typeahead({
+					source: data
+				});
+				
+				$(".typeahead").css("z-index", "1200");
+				
 			}
 			
 			// movie embed code
@@ -350,6 +436,9 @@ var TJEditor = function(){
 				if(parent.is(".slider_img")){
 					var data = {m_id: $(this).attr("m_id")};
 				}
+				if(btn_self.parents(".story_list").length){
+					var data = {c_id: $(this).attr("c_id")};
+				}
 				else{
 					var data = {p_id: $(this).attr("p_id")};	
 				}
@@ -369,6 +458,7 @@ var TJEditor = function(){
 									if(result.error){
 										bootbox.alert(result.msg);
 									}
+									
 								}	
 							});
 							
@@ -376,6 +466,9 @@ var TJEditor = function(){
 								goToSection("work");
 								WorksData.removeWorkById(data.p_id);
 								scrollLock = false;
+							}
+							if(btn_self.parents(".story_list").length){
+								StoryData.removeData(data.c_id);
 							}
 							else if(parent.is(".slider_img")){
 								parent.parents(".media").find(".thumb.active").remove();
@@ -449,7 +542,7 @@ var TJEditor = function(){
 				
 				var years = "";
 				for(var i=0; i<8; i++){
-					years += '<li><a>' + (cur_year-i) + '</a></li>';
+					years += '<li style="float: left;"><a>' + (cur_year-i) + '</a></li>';
 				}
 				
 				content.find(".dropdown-menu").append(years);

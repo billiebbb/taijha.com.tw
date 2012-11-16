@@ -286,7 +286,7 @@ article section {
 	filter: alpha(opacity = 10);
 }
 
-li{
+.pagination ul li{
 	float: left;
 }
 
@@ -931,9 +931,15 @@ a, a:active, a:focus, a:hover, input {
 	background-color: #ff3333;
 }
 
-.tj_btn.edit, .tj_btn[class*=add] {
+.tj_btn.edit {
+	background-color: #006666;
+}
+
+
+.tj_btn[class*=add] {
 	background-color: #336633;
 }
+
 
 .tj_btn [class*=icon-] {
 	margin: 10px 5px 0 0;
@@ -958,7 +964,11 @@ a, a:active, a:focus, a:hover, input {
 	background-color: #cc0000;
 }
 
-.tj_btn.edit:hover, .tj_btn[class*=add]:hover {
+.tj_btn.edit:hover {
+	background-color: #006699;
+}
+
+.tj_btn[class*=add]:hover {
 	background-color: #339933;
 }
 
@@ -1390,7 +1400,7 @@ a, a:active, a:focus, a:hover, input {
 	position: fixed;
 	bottom: 0;
 	left: 100px;
-	z-index: 1000px;
+	z-index: 1000;
 }
 
 .tj_editor_container .img_meta {
@@ -1398,4 +1408,11 @@ a, a:active, a:focus, a:hover, input {
 	text-align: center;
 	margin: 20px 0;
 }
- 
+
+.dropdown-menu li a {
+	cursor: pointer;
+}
+
+.icon-red {
+  background-image: url("../com/bootstrap/img/glyphicons-halflings-red.png");
+}

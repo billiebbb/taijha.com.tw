@@ -195,6 +195,7 @@ var Work = function(){
 			$proj.find(".slider_img").append(rm_btn);
 		}
 		
+		workResize();
 	};
 	
 	var setMediaArrow = function(media, idx) {

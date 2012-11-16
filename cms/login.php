@@ -36,12 +36,14 @@
 		
 		if ($userInfo->name == $name) {
 			
-			$lifeTime = 1 * 3600;
+			
 			
 			$sessionName = session_name();
 			$sessionID = $_GET[$sessionName];
 			
-			session_id($sessionID);			
+			session_id($sessionID);
+			
+			$lifeTime = 1 * 3600;			
 			session_set_cookie_params($lifeTime);
 			
 			session_start();
