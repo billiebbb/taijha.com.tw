@@ -769,6 +769,38 @@
 				<!-- end of story -->
 				
 				<!-- start of presale -->
+				<?php
+					$query = "SELECT title as name, p_id as id, content FROM tj_post WHERE category='presale'";
+					$result = $mysqli->query($query);
+					
+					$json = array();
+					
+					while($row = $result->fetch_assoc()){
+						$obj = $row;
+						
+						$query = "SELECT * FROM tj_media WHERE p_id=".$row["id"];
+						$mresult = $mysqli->query($query);
+						
+						while($mrow = $mresult->fetch_assoc()){
+							if($mrow["m_type"] == "image"){
+								$obj["images"] = array("uploads/".$mrow["url"]);
+								$obj["img_id"] = $mrow["m_id"];
+								$obj["thumbs"] = array("uploads/thumb_".$mrow["url"]);
+							}
+							else if($mrow["m_type"] == "map"){
+								$obj["map"] = "uploads/".$mrow["url"];
+								$obj["map_thumb"] = "uploads/thumb_".$mrow["url"];
+							}
+						}
+						
+						array_push($json, $obj);
+					}
+					
+					// $firephp->log($json);
+				?>
+				<script type="text/javascript">
+					PresaleData = <?php echo json_encode($json); ?>; 
+				</script>
 				<section id="presale">
 					
 					<div class="v_line" style="left: 140px;"></div>
@@ -776,7 +808,15 @@
 					<div id="building" class="building" >
 						
 					</div>
-					
+					<?php if($_SESSION["admin"]){ ?>
+					<div class="tj_btn edit add_presale" action="cms/add_presale.php" style="left: -255px; top: -260px; width: 110px;">
+			    		<div class="icon-plus icon-white"></div>新增預推新案
+		    		</div>
+		    		
+		    		<div class="tj_btn edit remove rm_presale" action="cms/remove_post.php" style="left: -400px; top: -260px; width: 110px;">
+			    		<div class="icon-plus icon-white"></div>刪除此筆案件
+		    		</div>
+					<?php } ?>
 					<div id="show_map" class="tj_btn" style="
 				    left: -10px;
 				    position: absolute;

@@ -1,7 +1,7 @@
 var TJEditor = function(){
 	var init = function(){
 		// $("#home_title").append("<div class='tj_btn edit text' key='home'>編輯</div>");
-		$(".tj_btn.edit, .remove_btn").live('click', function(event) {
+		$(".tj_btn.edit, .remove_story").live('click', function(event) {
 			
 			var btn_self = $(this);
 			var parent = btn_self.parent();
@@ -287,7 +287,7 @@ var TJEditor = function(){
 					<input type="text" placeholder="請輸入住戶名稱" class="name" style="width: 160px; margin-right: 5px;" />\
 					<input type="text" placeholder="請輸入建案名稱" class="project" style="width: 150px;" />\
 					<div class="tj_editor_container">\
-						<div class="text_editor"></div>\
+						<div class="text_editor" >請輸入故事內容</div>\
 					</div>\
 				</div>';
 				
@@ -329,11 +329,21 @@ var TJEditor = function(){
 									if(result.error){
 										bootbox.alert(result.msg);
 									}
+									else{
+										data.c_id = result.data.c_id;
+										
+										StoryData.addData(data);
+										Story.setStoryList($(".story_filter .value").text());
+										
+										if(!$(".story_filter li a:contains('" + data.project +"')").length){
+											$(".story_filter li:first").after('<li><a>' + data.project + '</a></li>');
+										}
+									}
 								}
 							});
 							
-							parent.html(data.content);
-							parent.append(btn_self);
+							// parent.html(data.content);
+							// parent.append(btn_self);
 						}
 					}
 					,{
@@ -359,6 +369,145 @@ var TJEditor = function(){
 				});
 				
 				$(".typeahead").css("z-index", "1200");
+				
+			}
+			
+			// add presale
+			else if(btn_self.is(".add_presale")){
+								
+		    	blockwheel = true;
+								
+				var markup = '\
+				<div class="tj_editor_container" >\
+					<input type="text" placeholder="請輸入案件標題" class="title" style="width: 300px; margin-right: 5px;" />\
+					<div class="file_upload_btn btn btn-success" style="margin-left: 0; top: 5px; left: 10px;">\
+						<div class="text"><i class="icon-upload icon-white"></i> 上傳案件建築圖</div>\
+					</div>\
+					<div style="width: 100%; border-top: 1px solid #cccccc; padding: 10px 0; color: #666666; text-align: center;">案件建築圖請上傳 800x800 pixel 解析度大於 72dpi 之 png 檔，並去除背景</div>\
+					<div class="tj_editor_container">\
+						<div class="text_editor" style="height: 200px;">請輸入案件資訊</div>\
+					</div>\
+				</div>';
+				
+				var content = $(markup);
+				var checkUpload;
+				
+				content.find(".text_editor").redactor({
+					lang: "zh_tw"
+					, buttons: ['html', '|', 'formatting', '|', 'bold', 'italic', 'deleted', '|'
+						, 'link', '|',
+						'fontcolor', 'backcolor', '|', 'alignment', '|', 'horizontalrule']
+				});
+				
+				if($.browser.msie){
+					$.each(content.find("input"), function(){
+						$(this).watermark($(this).attr("placeholder"));	
+					});
+				}
+				
+				var qquploader = new qq.FileUploaderBasic({
+					button: content.find(".file_upload_btn")[0]
+					, action: action
+					, debug: true
+					, allowedExtensions: ["png"]
+					, sizeLimit: 2000 * 1024 // 2mb 
+					, params: {}
+					, onSubmit: function(id, fileName) {
+						
+						content.find(".file_upload_btn .text").html(fileName);
+						checkUpload();
+		 			}
+		 			, autoUpload: false
+			 		, onUpload: function(id, fileName) {
+			 			content.find("input").attr("disabled", "true");			
+			        	content.find(".file_upload_btn").hide();
+					}
+					, onProgress: function(id, fileName, loaded, total) {
+			 			
+			      	}
+			      	, onComplete: function(id, fileName, responseJSON) {
+			      		
+			        	if (responseJSON.success) {
+			        		
+			          		Presale.addProject(responseJSON.data);
+			          		
+							blockwheel = false;
+							
+							box.modal('hide');
+							
+			          		TJEditor.addMap(responseJSON.data.id);	
+			          		
+			        	} else {
+			        		
+		        		}
+		        		
+		      		}
+		      		, messages: {
+			            typeError: "{file} 檔案格式錯誤，需選擇以下類型的檔案: {extensions}.",
+			            sizeError: "{file} 檔案太大了，最多只能上傳2mb大小之檔案.",
+			            // minSizeError: "{file} is too small, minimum file size is {minSizeLimit}.",
+			            // emptyError: "{file} is empty, please select files again without it.",
+			            noFilesError: "沒有任何檔案可上傳",
+			            onLeave: "檔案正在上傳中，離開將中斷上傳動作"
+			        }
+		      		, showMessage: function(message){
+			            bootbox.alert(message);
+			        }
+		    	});
+		    	
+		    	
+		    	var box = bootbox.dialog( content, [
+					{
+						'label': '確定'
+						, 'class': 'btn-success'
+						, 'callback': function(){
+							blockwheel = false;
+							qquploader.uploadStoredFiles();
+							return;
+						}
+					}
+					, {
+						'label': '取消'
+						, 'class': 'btn-link'
+						, 'callback': function(){
+							blockwheel = false;			
+						}
+					}
+					
+				], {
+					header: btn_self.text()
+				});
+				
+				content.find("input").keyup(function(){
+					checkUpload();
+				});
+				
+				checkUpload = function(){
+					
+					if(($.browser.msie)){
+						var val1 = content.find("input.title").watermarkVal();
+						 
+					}
+					else{
+						var val1 = content.find("input.title").val();
+					}
+					
+					var val2 = content.find(".text_editor").getCode();
+								
+					if(qquploader._handler._files.length == 1 && val1 && val2){
+						qquploader.setParams({
+			 				title: val1
+			 				, content: val2
+			 			});
+			 			
+						// box.find(".modal-footer .btn-success").show();		
+					}
+					else{
+						// box.find(".modal-footer .btn-success").hide();
+					}
+				};
+		    	
+		    	// box.find(".modal-footer .btn-success").hide();
 				
 			}
 			
@@ -436,8 +585,11 @@ var TJEditor = function(){
 				if(parent.is(".slider_img")){
 					var data = {m_id: $(this).attr("m_id")};
 				}
-				if(btn_self.parents(".story_list").length){
+				if(btn_self.is(".remove_story")){
 					var data = {c_id: $(this).attr("c_id")};
+				}
+				if(btn_self.is(".rm_presale")){
+					var data = {p_id: Presale.getCurrentId()};
 				}
 				else{
 					var data = {p_id: $(this).attr("p_id")};	
@@ -450,6 +602,8 @@ var TJEditor = function(){
 						, 'class': 'btn-success'
 						, 'callback': function(){
 							blockwheel = false;
+							scrollLock = false;
+							
 							$.ajax({
 								url: action
 								, data: data
@@ -465,10 +619,15 @@ var TJEditor = function(){
 							if(parent.is(".work_item")){
 								goToSection("work");
 								WorksData.removeWorkById(data.p_id);
-								scrollLock = false;
+								
 							}
-							if(btn_self.parents(".story_list").length){
+							else if(btn_self.is(".remove_story")){
 								StoryData.removeData(data.c_id);
+								Story.setStoryList($(".story_filter .value").text());
+								btn_self.parents("tr").remove();
+							}
+							else if(btn_self.is(".rm_presale")){
+								Presale.removeProject(data.p_id);
 							}
 							else if(parent.is(".slider_img")){
 								parent.parents(".media").find(".thumb.active").remove();
@@ -864,10 +1023,90 @@ var TJEditor = function(){
     	box.width(450).css("marginLeft", "-225px");
 	};
 	
+	var addMap = function(pid){
+		var action = "cms/add_map.php";
+		
+		var markup = '\
+		<div class="tj_editor_container">\
+			<div class="file_upload_btn btn btn-success">\
+				<i class="icon-upload icon-white"></i> 上傳位置圖\
+			</div>\
+			<div class="img_meta" style="margin: 0; position:relative; float: left;"> </div>\
+		</div>';
+
+		var content = $(markup);
+		content.find(".img_meta").text("請上傳解析度大於 72dpi 之 jpg 檔");
+		
+		
+		var box = bootbox.dialog( content, [
+			{
+				'label': '取消'
+				, 'class': 'btn-link'
+				, 'callback': function(){
+					blockwheel = false;			
+				}
+			}			
+		], {
+			header: "上傳位置圖"
+		});
+		
+		var qquploader = new qq.FileUploaderBasic({
+			button: content.find(".file_upload_btn")[0]
+			, params: {pid: pid}
+			, action: action
+			, debug: true
+			, allowedExtensions: ["png"]
+			, sizeLimit: 2000 * 1024 // 1mb 
+			, onSubmit: function(id, fileName) {
+				content.find(".file_upload_btn").hide();
+ 			}
+	 		, onUpload: function(id, fileName) {
+	        	// box.modal('hide');
+
+			}
+			, onProgress: function(id, fileName, loaded, total) {
+	 			if (loaded < total) {
+	 				var progress = "已上傳 " + Math.round(loaded / 1024) + ' kB(' + Math.round(loaded / total * 100) + '%)';
+	 				content.find(".img_meta").text(progress);							
+		        } else {
+					var progress = "已上傳 " + Math.round(total / 1024) + ' kB(100%)';
+	 				content.find(".img_meta").text(progress);
+		        }
+	      	}
+	      	, onComplete: function(id, fileName, responseJSON) {
+	      		blockwheel = false;
+	        	if (responseJSON.success) {
+	        		
+	        		box.modal('hide');
+	          		
+	          		WorksData.addWorksInfo(responseJSON.data);
+	          		TJEditor.addWorkImageByPid(responseJSON.data.p_id);	
+	          		
+	          		
+	        	} else {
+	        		
+        		}
+        		
+      		}
+      		, messages: {
+	            typeError: "{file} 檔案格式錯誤，需選擇以下類型的檔案: {extensions}.",
+	            sizeError: "{file} 檔案太大了，最多只能上傳2mb大小之檔案.",
+	            // minSizeError: "{file} is too small, minimum file size is {minSizeLimit}.",
+	            // emptyError: "{file} is empty, please select files again without it.",
+	            noFilesError: "沒有任何檔案可上傳",
+	            onLeave: "檔案正在上傳中，離開將中斷上傳動作"
+	        }
+      		, showMessage: function(message){
+	            bootbox.alert(message);
+	        }
+    	});
+	};
+	
 	return {
 		init: init
 		, addWorkInfoByPid: addWorkInfoByPid
 		, addWorkImageByPid: addWorkImageByPid
+		, addMap: addMap
 	};
 }();
 

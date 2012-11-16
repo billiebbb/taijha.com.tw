@@ -3,51 +3,19 @@ var Presale = function(){
 	var presale_data;
 	var pre_idx;
 	var initialized = false;
+	
 	var markup = '\
-		<table style="width: 100%;">\
-			<tbody>\
-				<tr>\
-					<td valign="top" class="title" colspan="2" style="width: 70px;">${name}</td>\
-				</tr>\
-				<tr>\
-					<td valign="top" style="width: 70px;">基地面積:</td>\
-					<td valign="top">${base_size}</td>\
-				</tr>\
-				<tr>\
-					<td valign="top" style="width: 70px;">建築規劃:</td>\
-					<td valign="top">${plan}</td>\
-				</tr>\
-				<tr>\
-					<td valign="top" style="width: 70px;">坪數規劃:</td>\
-					<td valign="top">${size}</td>\
-				</tr>\
-				<tr>\
-					<td valign="top" style="width: 70px;">開工日期:</td>\
-					<td valign="top">${start_at}</td>\
-				</tr>\
-				<tr>\
-					<td valign="top" style="width: 70px;">預計完工:</td>\
-					<td valign="top">${complete_at}</td>\
-				</tr>\
-				<tr>\
-					<td valign="top" style="width: 70px;">座落地點:</td>\
-					<td valign="top">${location}</td>\
-				</tr>\
-			</tbody>\
-		</table>\
+		<div class="presale_info" style="width: 100%;">\
+			<div class="title">${name}</div>\
+			<div>{{html content}}</div>\
+		</div>\
 	';
+	
 	var init = function(){
+		
 		presale_data = PresaleData;
-		$.template( "presaleMeta", markup );
 		
-		var item_data = "";
-		$.each(presale_data, function(i){
-			item_data += "<div class='item' rel='tooltip' title='" + this.name + "'><img src='" + this.thumbs[0] + "' /><div class='border'></div></div>";
-		});
-		
-		var item_list = $("#presale #presale_list .item_list");
-		item_list.append(item_data);
-		item_list.width( 127 * presale_data.length + 10);
+		reset();
 		
 		$("#presale").find(".next_btn, .prev_btn").live('click', function(){
 			if($(this).is(".active")) return;
@@ -83,8 +51,24 @@ var Presale = function(){
 			LightBox.show({images: [presale_data[cur_idx].map]} );
 		});
 		
-		
 		setContent();
+	};
+	
+	var reset = function(){
+		
+		$.template( "presaleMeta", markup );
+		
+		
+		var item_data = "";
+		$.each(presale_data, function(i){
+			item_data += "<div class='item' rel='tooltip' title='" + this.name + "'><img src='" + this.thumbs[0] + "' /><div class='border'></div></div>";
+		});
+		
+		var item_list = $("#presale #presale_list .item_list");
+		
+		item_list.empty().append(item_data);
+		
+		item_list.width( 127 * presale_data.length + 10);
 	};
 	
 	var setContent = function(){
@@ -117,7 +101,9 @@ var Presale = function(){
 		nimg.css("left", (direction * $(window).width() * -1) + "px");
 		$("#presale #building").append(nimg);
 		
-		nimg.animate({left: 0}, 500);
+		nimg.animate({left: 0}, 500);		
+		// console.dir(mydata)
+		
 		if(mydata.map_thumb){
 			$("#presale #map_thumb").html("<img src='" + mydata.map_thumb + "' />");
 			$("#presale").find("#map_thumb, #show_map").removeClass('active');	
@@ -132,13 +118,13 @@ var Presale = function(){
 		$("#presale #presale_list .item:eq(" + cur_idx + ")").addClass('active');
 		
 		var ometa = $("#meta table");
-		var nmeta =  $.tmpl( "presaleMeta", [mydata]);
+		var nmeta =  $.tmpl( "presaleMeta", mydata);
 		
 		ometa.animate({top: -ometa.width()*3}, 500, function(){
 			$(this).remove();
 		});
 		
-		$("#meta").append(nmeta);
+		$("#meta").empty().append(nmeta);
 		nmeta.css("top", $(window).height() + "px").animate({top: 0}, 500);
 		
 		var idx_obj = $("#presale .index_object");
@@ -150,10 +136,42 @@ var Presale = function(){
 		}, 500);
 	};
 	
+	var getCurrentId = function(){
+		return presale_data[cur_idx].id;
+	};
 	
+	var addProject = function(data){
+		presale_data.unshift(data);
+		reset();
+		cur_idx = 0;
+		setContent();
+		$("#presale_list .item_lit .item:first").click();
+	};
+	
+	var removeProject = function(pid){
+		
+		for(var key in presale_data){
+			if(presale_data[key].id == pid){
+				presale_data.splice(key, 1);
+				break;
+			}
+		}
+		
+		reset();
+		cur_idx = 0;
+		setContent();
+		
+	};
+	
+	var updateMap = function(data){
+		
+	};
 	
 	return {
 		init: init
+		, getCurrentId: getCurrentId
+		, addProject: addProject
+		, removeProject: removeProject
 	};
 }();
 

@@ -24,7 +24,7 @@ var Story = function(){
 	        	<td>${title}</td>\
 	        	<td>${project}</td>\
 	        	<td>${name}</td>\
-	        	<td><div c_id="${c_id}" class="icon-remove remove_btn icon-red remove" action="cms/remove_comment.php"></div></td>\
+	        	<td><div c_id="${c_id}" class="icon-remove remove_story icon-red remove" action="cms/remove_story.php"></div></td>\
 	       	</tr>';
 		}
 		
