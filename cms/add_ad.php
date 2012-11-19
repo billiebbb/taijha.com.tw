@@ -2,8 +2,6 @@
 	require_once './db_config.inc.php';
 	require_once './com/fileuploader/php.php';
 	require_once './simpleImage.php';
-	require_once("./com/FirePHPCore/FirePHP.class.php");
-	$firephp = FirePHP::getInstance(true);
 	
 	session_start();
 	
@@ -16,13 +14,8 @@
 	}
 	else{
 		
-		$title = $_GET["title"];
-		$content = $_GET["content"];
+		$name = $_GET["name"];
 		
-		$query = "INSERT INTO tj_post (title, content, update_at, category) VALUES ('$title', '$content', NOW(), 'presale')";
-		$mysqli->query($query);
-		
-		$p_id = $mysqli->insert_id;
 		
 		$qqfile = new qqUploadedFileXhr();
 		$file = $qqfile->getName();
@@ -38,27 +31,27 @@
 		
 		if($qqfile->save($thumb)){
 			
+			// $firephp->log("thumb has been saved.");
+
+			
 			$img = new SimpleImage();
 			$img->load($thumb);
-			
 			$w = $img->getWidth();
 			$h = $img->getHeight();
 			
-			if($w > $h){
-				$img->resizeToWidth(320);	
-			}
-			else{
-				$img->resizeToHeight(320);
-			}	
+			
+			$img->resizeToWidth(420);	
+				
 		}
 		
-		$query = "INSERT INTO tj_media (m_type, url, category, p_id) VALUES( 'image', '$new_file', 'presale', $p_id)";
+		$query = "INSERT INTO tj_post (title, content, update_at, category) VALUES ('$name', '$new_file', NOW(), 'ad')";
 		$mysqli->query($query);
 		
+		$p_id = $mysqli->insert_id;
+		
 		if($mysqli->affected_rows == 1){
-			$presale = array("title"=>$title, "img_id"=> $mysqli->insert_id, "thumbs"=>array("uploads/thumb_".$new_file)
-			, "images"=> array("uploads/".$new_file), "id"=>$p_id, "content"=>$content);
-			$json = array("success" => TRUE, "msg" => "更新成功", "data" => $presale);
+			$recent = array("name"=>$name, "p_id"=> $mysqli->insert_id, "image"=> "uploads/".$new_file, "thumb"=>"uploads/thumb_".$new_file);
+			$json = array("success" => TRUE, "msg" => "更新成功", "data" => $recent);
 			echo json_encode($json);
 		}
 		else{

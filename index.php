@@ -770,7 +770,7 @@
 				
 				<!-- start of presale -->
 				<?php
-					$query = "SELECT title as name, p_id as id, content FROM tj_post WHERE category='presale'";
+					$query = "SELECT title as name, p_id as id, content FROM tj_post WHERE category='presale' ORDER BY update_at DESC";
 					$result = $mysqli->query($query);
 					
 					$json = array();
@@ -789,6 +789,7 @@
 							}
 							else if($mrow["m_type"] == "map"){
 								$obj["map"] = "uploads/".$mrow["url"];
+								$obj["map_id"] = $mrow["m_id"];
 								$obj["map_thumb"] = "uploads/thumb_".$mrow["url"];
 							}
 						}
@@ -806,15 +807,24 @@
 					<div class="v_line" style="left: 140px;"></div>
 					
 					<div id="building" class="building" >
-						
+						<?php if($_SESSION["admin"]){ ?>
+							<div class='tj_btn edit image' style="top: -10px;"><div class="icon-picture icon-white"></div>編輯建築圖片</div>
+						<?php } ?>
 					</div>
 					<?php if($_SESSION["admin"]){ ?>
-					<div class="tj_btn edit add_presale" action="cms/add_presale.php" style="left: -255px; top: -260px; width: 110px;">
-			    		<div class="icon-plus icon-white"></div>新增預推新案
+					<div class="tj_btn edit add_presale" action="cms/add_presale.php" style="left: 285px; top: -260px; width: 80px;">
+			    		<div class="icon-plus icon-white"></div>新增案件
 		    		</div>
 		    		
-		    		<div class="tj_btn edit remove rm_presale" action="cms/remove_post.php" style="left: -400px; top: -260px; width: 110px;">
-			    		<div class="icon-plus icon-white"></div>刪除此筆案件
+		    		<div class="tj_btn edit remove rm_presale" action="cms/remove_post.php" style="left: 140px; top: -260px; width: 110px;">
+			    		<div class="icon-remove icon-white"></div>刪除此筆案件
+		    		</div>
+		    		
+		    		<div class="tj_btn edit edit_map" action="cms/add_map.php" style="left: -10px;
+				    position: absolute;
+				    top: -260px;
+				    width: 100px;">
+			    		<div class="icon-pencil icon-white"></div>編輯位置圖
 		    		</div>
 					<?php } ?>
 					<div id="show_map" class="tj_btn" style="
@@ -848,6 +858,24 @@
 				</section>
 				<!-- end of presale -->
 				
+				
+				<?php
+					$query = "SELECT title as name, p_id, content as image FROM tj_post WHERE category='ad' ORDER BY update_at DESC";
+					$result = $mysqli->query($query);
+					
+					$json = array();
+					
+					while($row = $result->fetch_assoc()){
+						
+						$obj = $row;
+						$obj["image"] = "uploads/".$row["image"];
+						$obj["thumb"] = "uploads/thumb_".$row["image"];
+						array_push($json, $obj);
+					}
+				?>
+				<script type="text/javascript">
+					ADData = <?php echo json_encode($json); ?>; 
+				</script>
 				<!-- start of ad -->
 				<section id="ad">
 					<div id="full_ad" class="tj_btn" style="
@@ -857,6 +885,13 @@
 				    width: 100px;
 				    z-index: 780;
 					"><div class="icon-zoom-in icon-white"></div><div>全螢幕顯示</div></div>
+					
+					<?php if($_SESSION["admin"]){ ?>
+						<div class="tj_btn edit add_ad" action="cms/add_ad.php" style="left: -380px; top: -260px; width: 80px; z-index: 785;">
+				    		<div class="icon-plus icon-white"></div>新增廣告
+			    		</div>
+		    		<?php } ?>
+					
 					<div id="ad_flow">
 						
 					</div>

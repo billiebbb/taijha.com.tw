@@ -1,6 +1,11 @@
 <?php
-	require_once './db_config.inc.php';	
-	$redirect = "http://localhost/taijha2/";
+	require_once './db_config.inc.php';
+		if($_SERVER["SERVER_NAME"] == "localhost"){
+		$redirect = "http://localhost/taijha2/";
+	}else{
+		$redirect = "http://www.taijia.com.tw/";	
+	}
+	
 	$posts = $_POST;
 	
 	foreach ($posts as $key => $value) {

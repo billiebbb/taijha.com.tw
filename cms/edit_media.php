@@ -1,6 +1,10 @@
 <?php
 	require_once './db_config.inc.php';
 	require_once './com/fileuploader/php.php';
+	require_once './simpleImage.php';
+	require_once("./com/FirePHPCore/FirePHP.class.php");
+	
+	$firephp = FirePHP::getInstance(true);
 	
 	session_start();
 	
@@ -27,6 +31,27 @@
 		$qqfile->save("../uploads/".$new_file);
 		
 		imageinterlace("../uploads/".$new_file, true);
+		
+		
+		$thumb = "../uploads/thumb_".$new_file;
+		
+		if($qqfile->save($thumb)){
+			
+			// $firephp->log("thumb has been saved.");
+			
+			$img = new SimpleImage();
+			$img->load($thumb);
+			$w = $img->getWidth();
+			$h = $img->getHeight();
+			
+			if($w > $h){
+				$img->resizeToWidth(320);	
+			}
+			else{
+				$img->resizeToHeight(320);
+			}	
+		}
+		
 		
 		$query = "UPDATE tj_media SET url='$new_file' WHERE m_id=$m_id";
 		$mysqli->query($query);

@@ -2,8 +2,6 @@
 	require_once './db_config.inc.php';
 	require_once './com/fileuploader/php.php';
 	require_once './simpleImage.php';
-	require_once("./com/FirePHPCore/FirePHP.class.php");
-	$firephp = FirePHP::getInstance(true);
 	
 	session_start();
 	
@@ -16,17 +14,12 @@
 	}
 	else{
 		
-		$title = $_GET["title"];
-		$content = $_GET["content"];
-		
-		$query = "INSERT INTO tj_post (title, content, update_at, category) VALUES ('$title', '$content', NOW(), 'presale')";
-		$mysqli->query($query);
-		
-		$p_id = $mysqli->insert_id;
-		
+		$p_id = $_GET["pid"];
+				
 		$qqfile = new qqUploadedFileXhr();
 		$file = $qqfile->getName();
 		
+
 		$ext = pathinfo($file, PATHINFO_EXTENSION);		
 		$new_file = uniqid("tj_").".".$ext;
 		
@@ -37,10 +30,8 @@
 		$thumb = "../uploads/thumb_".$new_file;
 		
 		if($qqfile->save($thumb)){
-			
 			$img = new SimpleImage();
 			$img->load($thumb);
-			
 			$w = $img->getWidth();
 			$h = $img->getHeight();
 			
@@ -52,20 +43,21 @@
 			}	
 		}
 		
-		$query = "INSERT INTO tj_media (m_type, url, category, p_id) VALUES( 'image', '$new_file', 'presale', $p_id)";
+		$query = "DELETE FROM tj_media WHERE m_type='map' AND p_id=$p_id";
+		$mysqli->query($query);
+		
+		$query = "INSERT INTO tj_media (m_type, url, category, p_id) VALUES( 'map', '$new_file', 'presale', $p_id)";
 		$mysqli->query($query);
 		
 		if($mysqli->affected_rows == 1){
-			$presale = array("title"=>$title, "img_id"=> $mysqli->insert_id, "thumbs"=>array("uploads/thumb_".$new_file)
-			, "images"=> array("uploads/".$new_file), "id"=>$p_id, "content"=>$content);
-			$json = array("success" => TRUE, "msg" => "更新成功", "data" => $presale);
+			$work = array( "m_id"=> $mysqli->insert_id, "image"=> "uploads/".$new_file, "id"=>$p_id);
+			$json = array("success" => TRUE, "msg" => "新增成功", "data" => $work);
 			echo json_encode($json);
 		}
 		else{
 			$json = array("error" => TRUE, "msg" => "新增失敗");
 			echo json_encode($json);
 		}	
-		
 	}
 	
 ?>

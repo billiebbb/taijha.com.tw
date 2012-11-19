@@ -7,13 +7,27 @@ var Presale = function(){
 	var markup = '\
 		<div class="presale_info" style="width: 100%;">\
 			<div class="title">${name}</div>\
-			<div>{{html content}}</div>\
+			<div class="content">{{html content}}</div>\
 		</div>\
 	';
 	
 	var init = function(){
 		
 		presale_data = PresaleData;
+		
+		if(is_admin){
+			markup = '\
+			<div class="presale_info" style="width: 100%;">\
+				<div class="title">${name}</div>\
+				<div class="content">\
+					<div class="tj_btn edit text" action="cms/edit_text.php" p_id="${id}">\
+						<div class="icon-pencil icon-white"></div>編輯文字\
+					</div>\
+					{{html content}}\
+				</div>\
+			</div>\
+		';
+		}
 		
 		reset();
 		
@@ -56,8 +70,7 @@ var Presale = function(){
 	
 	var reset = function(){
 		
-		$.template( "presaleMeta", markup );
-		
+		$.template( "presaleMeta", markup );		
 		
 		var item_data = "";
 		$.each(presale_data, function(i){
@@ -74,6 +87,8 @@ var Presale = function(){
 	var setContent = function(){
 		var mydata = presale_data[cur_idx];
 		// $("#presale #building").html("<img src='" + mydata.images[0] + "' />");
+		
+		$("#presale #building .tj_btn.edit.image").attr("action", "cms/edit_media.php?m_id=" + mydata.img_id );
 		
 		var nimg = $("<img src='" + mydata.images[0] + "' />");
 		var oimg = $("#presale #building img");
@@ -149,7 +164,7 @@ var Presale = function(){
 	};
 	
 	var removeProject = function(pid){
-		
+		// console.log(pid);
 		for(var key in presale_data){
 			if(presale_data[key].id == pid){
 				presale_data.splice(key, 1);
@@ -163,8 +178,16 @@ var Presale = function(){
 		
 	};
 	
-	var updateMap = function(data){
+	var addMap = function(data){
+		for(var key in presale_data){
+			if(presale_data[key].id == data.id){
+				presale_data[key].map = data.image;
+				break;
+			}
+		}
 		
+		reset();
+		setContent();
 	};
 	
 	return {
@@ -172,6 +195,7 @@ var Presale = function(){
 		, getCurrentId: getCurrentId
 		, addProject: addProject
 		, removeProject: removeProject
+		, addMap: addMap
 	};
 }();
 

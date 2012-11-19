@@ -977,6 +977,10 @@ a, a:active, a:focus, a:hover, input {
 	cursor: default;
 }
 
+.tj_btn.edit.image {
+	left: 0;
+}
+
 .work_item .media .slider_controller .idx_obj {
 	width: 80px;
 	font-family: 微軟正黑體, Arial, Helvetica,sans-serif,STHeiti Light,儷黑 Pro,LiHei Pro,Microsoft Yahei,Microsoft JhengHei, 新細明體;
