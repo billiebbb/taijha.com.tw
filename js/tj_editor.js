@@ -702,13 +702,16 @@ var TJEditor = function(){
 			
 			// remove post
 			else if(btn_self.is(".remove")){
+				var data = {};
+				
 				if(parent.is(".slider_img")){
 					var data = {m_id: $(this).attr("m_id")};
 				}
-				if(btn_self.is(".remove_story")){
+				else if(btn_self.is(".remove_story")){
 					var data = {c_id: $(this).attr("c_id")};
+					
 				}
-				if(btn_self.is(".rm_presale")){
+				else if(btn_self.is(".rm_presale")){
 					var data = {p_id: Presale.getCurrentId()};
 				}
 				else{
